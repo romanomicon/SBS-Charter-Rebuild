@@ -1,0 +1,149 @@
+/* ================================
+   Settings Page
+   ================================ */
+
+.settings-page {
+  max-width: 600px;
+}
+
+.settings-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-default);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-primary);
+}
+
+.settings-card h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-row label {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.setting-row .description {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* ================================
+   Preset Selector
+   ================================ */
+
+.preset-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preset-button {
+  padding: 12px 16px;
+  border: 2px solid var(--border-primary);
+  border-radius: var(--radius-medium);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  text-align: center;
+}
+
+.preset-button:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.preset-button.active {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 2px 8px rgba(105, 160, 191, 0.3);
+}
+
+/* ================================
+   Custom Color Picker
+   ================================ */
+
+.custom-color-picker {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-secondary);
+}
+
+.custom-color-picker p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.color-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.color-input-group label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+  background: var(--bg-surface);
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.color-value {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex: 1;
+}

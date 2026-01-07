@@ -1,0 +1,153 @@
+/* ================================
+   Library Page
+   ================================ */
+
+#book-library {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.25rem;
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* Book tile with delete button */
+.book-tile {
+  position: relative;
+  background: var(--bg-surface);
+  border-radius: var(--radius-large);
+  padding: 16px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  border: 1px solid var(--border-primary);
+}
+
+.book-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.book-tile h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Delete book button */
+.delete-book {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.book-tile:hover .delete-book {
+  opacity: 1;
+}
+
+.delete-book:hover {
+  background: rgba(192, 57, 43, 0.12);
+}
+
+.delete-book::before {
+  content: "🗑️";
+  font-size: 16px;
+}
+
+.delete-book:focus {
+  outline: 2px solid rgba(192, 57, 43, 0.4);
+}
+
+/* ================================
+   Undo Toast Notification
+   ================================ */
+
+#undo-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  opacity: 0;
+  background: var(--toast-bg);
+  color: var(--toast-text);
+  padding: 10px 16px;
+  border-radius: var(--radius-medium);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  box-shadow: var(--shadow-strong);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  z-index: 1000;
+}
+
+#undo-toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+#undo-toast.hidden {
+  transform: translateX(-50%) translateY(120%);
+  opacity: 0;
+}
+
+#undo-toast button {
+  background: none;
+  border: none;
+  color: var(--toast-progress);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+#undo-toast button:hover {
+  text-decoration: underline;
+}
+
+/* Progress bar container */
+#undo-progress-container {
+  width: 100%;
+  height: 4px;
+  background: var(--border-primary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#undo-progress {
+  height: 100%;
+  background: var(--toast-progress);
+  width: 100%;
+  transition: width 1s linear;
+}
+
+/* ================================
+   Responsive Grid
+   ================================ */
+
+@media (max-width: 768px) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-grid {
+    grid-template-columns: 1fr;
+  }
+}

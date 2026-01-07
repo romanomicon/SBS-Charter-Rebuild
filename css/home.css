@@ -1,0 +1,67 @@
+/* ================================
+   Home Page
+   ================================ */
+
+.home-hero {
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* Book tile */
+.book-tile {
+  background: var(--bg-surface);
+  border-radius: var(--radius-large);
+  padding: 1rem;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+  border: 1px solid var(--border-primary);
+}
+
+.book-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  background: var(--toast-bg);
+}
+
+.book-tile:hover .book-title,
+.book-tile:hover .book-meta {
+  color: var(--toast-text);
+}
+
+.book-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+  transition: color 0.2s;
+}
+
+.book-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+/* ================================
+   Responsive Grid
+   ================================ */
+
+@media (max-width: 768px) {
+  .books-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-grid {
+    grid-template-columns: 1fr;
+  }
+}

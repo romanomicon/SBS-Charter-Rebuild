@@ -1,0 +1,225 @@
+/* ================================
+   Universal Theme System
+   All colors controlled via CSS variables
+   ================================ */
+
+:root {
+  /* Background Colors */
+  --bg-primary: #F9F9F9;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #f1f1f3;
+  --bg-hover: #f7f7f7;
+  
+  /* Text Colors */
+  --text-primary: #331f1f;
+  --text-secondary: #898989;
+  --text-muted: #666666;
+  --text-inverse: #ffffff;
+  
+  /* Accent Colors */
+  --accent-primary: #69A0BF;
+  --accent-hover: #5a8dad;
+  --accent-light: #9ae6b4;
+  --accent-light-hover: #68d391;
+  
+  /* Border & Separator Colors */
+  --border-primary: #cbd5e1;
+  --border-secondary: #e0e0e0;
+  --border-input: #cccccc;
+  
+  /* Status Colors */
+  --color-success: #1e7f4f;
+  --color-success-bg: #e6f4ea;
+  --color-danger: #c0392b;
+  --color-danger-light: #f56565;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  
+  /* Toast/Notification Colors */
+  --toast-bg: #1f2933;
+  --toast-text: #ffffff;
+  --toast-progress: #9ae6b4;
+  
+  /* Shadow */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 14px rgba(0, 0, 0, 0.12);
+  --shadow-strong: 0 6px 20px rgba(0, 0, 0, 0.2);
+  
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 6px;
+  --radius-large: 10px;
+  --radius-default: 12px;
+  
+  /* Structure Colors (for different hierarchy levels) */
+  --structure-division: #3b82f6;
+  --structure-section: #10b981;
+  --structure-segment: #f59e0b;
+  
+  /* Navigation */
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --nav-blur: saturate(180%) blur(12px);
+}
+
+/* ================================
+   Preset: Dark Mode
+   ================================ */
+[data-preset="dark"] {
+  --bg-primary: #1c1c1e;
+  --bg-surface: #2c2c2e;
+  --bg-surface-muted: #3a3a3c;
+  --bg-hover: #3a3a3c;
+  
+  --text-primary: #edf2f7;
+  --text-secondary: #a4a4a4;
+  --text-muted: #898989;
+  --text-inverse: #1a202c;
+  
+  --accent-primary: #69A0BF;
+  --accent-hover: #7ab3d1;
+  --accent-light: #68d391;
+  --accent-light-hover: #9ae6b4;
+  
+  --border-primary: #4a5568;
+  --border-secondary: #3a3a3c;
+  --border-input: #4a5568;
+  
+  --color-success: #68d391;
+  --color-success-bg: #2d3748;
+  --color-danger: #fc8181;
+  --color-danger-light: #fc8181;
+  
+  --toast-bg: #2d3748;
+  --toast-text: #edf2f7;
+  --toast-progress: #68d391;
+  
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-strong: 0 6px 20px rgba(0, 0, 0, 0.5);
+  
+  --nav-bg: rgba(44, 44, 46, 0.8);
+}
+
+/* ================================
+   Preset: Ocean Blue
+   ================================ */
+[data-preset="blue"] {
+  --bg-primary: #f0faff;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #e0f2fe;
+  --bg-hover: #e0f2fe;
+  
+  --text-primary: #1a202c;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --accent-primary: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #63b3ed;
+  --accent-light-hover: #4299e1;
+  
+  --border-primary: #90cdf4;
+  --border-secondary: #bfdbfe;
+  --border-input: #93c5fd;
+  
+  --toast-bg: #2c5282;
+  --toast-text: #e2e8f0;
+  --toast-progress: #63b3ed;
+  
+  --structure-division: #2563eb;
+  --structure-section: #0ea5e9;
+  --structure-segment: #06b6d4;
+}
+
+/* ================================
+   Preset: Forest Green
+   ================================ */
+[data-preset="green"] {
+  --bg-primary: #f0fdf4;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #dcfce7;
+  --bg-hover: #dcfce7;
+  
+  --text-primary: #1f2933;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --accent-primary: #10b981;
+  --accent-hover: #059669;
+  --accent-light: #9ae6b4;
+  --accent-light-hover: #68d391;
+  
+  --border-primary: #86efac;
+  --border-secondary: #bbf7d0;
+  --border-input: #86efac;
+  
+  --toast-bg: #065f46;
+  --toast-text: #ecfdf5;
+  --toast-progress: #9ae6b4;
+  
+  --structure-division: #059669;
+  --structure-section: #10b981;
+  --structure-segment: #34d399;
+}
+
+/* ================================
+   Preset: Sunset Orange
+   ================================ */
+[data-preset="orange"] {
+  --bg-primary: #fff7ed;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #ffedd5;
+  --bg-hover: #ffedd5;
+  
+  --text-primary: #1f2933;
+  --text-secondary: #78716c;
+  --text-muted: #a8a29e;
+  
+  --accent-primary: #f97316;
+  --accent-hover: #ea580c;
+  --accent-light: #fb923c;
+  --accent-light-hover: #f97316;
+  
+  --border-primary: #fdba74;
+  --border-secondary: #fed7aa;
+  --border-input: #fdba74;
+  
+  --toast-bg: #7c2d12;
+  --toast-text: #fff7ed;
+  --toast-progress: #fb923c;
+  
+  --structure-division: #ea580c;
+  --structure-section: #f97316;
+  --structure-segment: #fb923c;
+}
+
+/* ================================
+   Preset: Purple Haze
+   ================================ */
+[data-preset="purple"] {
+  --bg-primary: #faf5ff;
+  --bg-surface: #ffffff;
+  --bg-surface-muted: #f3e8ff;
+  --bg-hover: #f3e8ff;
+  
+  --text-primary: #1f2933;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  
+  --accent-primary: #9333ea;
+  --accent-hover: #7e22ce;
+  --accent-light: #a855f7;
+  --accent-light-hover: #9333ea;
+  
+  --border-primary: #c084fc;
+  --border-secondary: #d8b4fe;
+  --border-input: #c084fc;
+  
+  --toast-bg: #581c87;
+  --toast-text: #faf5ff;
+  --toast-progress: #a855f7;
+  
+  --structure-division: #7e22ce;
+  --structure-section: #9333ea;
+  --structure-segment: #a855f7;
+}

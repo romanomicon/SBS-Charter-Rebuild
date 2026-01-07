@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bible Books — Home</title>
+  <link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/home.css">
+  <script>
+    // Apply saved theme immediately
+    const savedPreset = localStorage.getItem('themePreset') || 'green';
+    document.documentElement.setAttribute('data-preset', savedPreset);
+  </script>
+
+</head>
+
+<body>
+  <!-- Global nav (shared style across pages) -->
+  <header class="global-nav">
+    <div class="nav-inner">
+      <div class="brand">Bible Flow</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="settings.html">Settings</a>
+        <a href="#">Account</a>
+        <a href="library.html">Library</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="home-hero">
+      <h1>Choose a Book</h1>
+      <p class="muted">Click a tile to open the book page and start creating structure items.</p>
+    </section>
+
+    <!-- Grid where tiles will be inserted by home.js -->
+    <section id="booksGrid" class="books-grid" aria-live="polite"></section>
+
+    <footer class="footer">Built with plain HTML/CSS/JS — sample site</footer>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/books.js"></script>
+  <script type="module" src="js/home.js"></script>
+</body>
+
+</html>

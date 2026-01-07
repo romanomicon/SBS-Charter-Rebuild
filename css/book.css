@@ -1,0 +1,267 @@
+/* ================================
+   Book Page Layout
+   ================================ */
+
+.book-page {
+  padding: 1rem 2rem;
+  height: 100vh;
+}
+
+.book-info-row {
+  background: var(--bg-surface);
+  padding: 1rem;
+  border-radius: var(--radius-medium);
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  border: 1px solid var(--border-primary);
+}
+
+.input-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input-inline label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ================================
+   Two-Column Layout
+   ================================ */
+
+.two-col {
+  display: flex;
+  gap: 2rem;
+  height: calc(100% - 2rem);
+}
+
+.left-panel,
+.right-panel {
+  flex: 1;
+  background: var(--bg-surface);
+  padding: 1rem;
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--border-primary);
+}
+
+/* Make right panel narrower for structure */
+.right-panel {
+  max-width: 360px;
+}
+
+/* ================================
+   Paragraph Rows (Left Panel)
+   ================================ */
+
+#paragraphRows {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0 6px;
+}
+
+.paragraph-rows {
+  padding: 0.75rem;
+}
+
+.paragraph-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0;
+  padding: 0.3rem;
+  border-bottom: 1px solid var(--border-secondary);
+  color: var(--text-secondary);
+}
+
+.paragraph-row.compact {
+  padding: 6px 8px;
+}
+
+.paragraph-row:last-child {
+  border-bottom: none;
+}
+
+/* Verse label */
+.verse-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  min-width: 60px;
+}
+
+.verse-label.small {
+  font-size: 0.75rem;
+}
+
+/* Verse text box */
+.verse-text-box {
+  padding: 0.5rem;
+  background: var(--bg-surface-muted);
+  border-radius: var(--radius-small);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  max-height: 120px;
+  overflow-y: auto;
+  margin-top: 6px;
+}
+
+/* Paragraph editor */
+.paragraph-editor {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.paragraph-title {
+  flex: 1;
+  width: 100%;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--border-primary);
+  padding: 4px 6px;
+  font-size: 0.85rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input.paragraph-title:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(105, 160, 191, 0.2);
+}
+
+/* Row buttons */
+.row-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn.small.compact-btn {
+  padding: 3px 6px;
+  font-size: 0.75rem;
+}
+
+.btn.small.compact-btn:hover {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+/* ================================
+   Structure List (Right Panel)
+   ================================ */
+
+#structureList {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.structure-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem;
+}
+
+.structure-box {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-surface-muted);
+  margin-bottom: 0.5rem;
+}
+
+.structure-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+}
+
+.structure-row input {
+  flex: 1;
+}
+
+/* Structure box inputs */
+.structure-box input {
+  width: 100%;
+  padding: 3px 5px;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  transition: border 0.2s, box-shadow 0.2s;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.structure-box input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(105, 160, 191, 0.2);
+}
+
+/* Range label */
+.range-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+/* Structure buttons */
+.structure-box .btn {
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  margin-left: 2px;
+}
+
+/* Visual hierarchy colors */
+.division-box {
+  border-left: 4px solid var(--structure-division);
+}
+
+.section-box {
+  border-left: 4px solid var(--structure-section);
+}
+
+.segment-box {
+  border-left: 4px solid var(--structure-segment);
+}
+
+/* Structure separator */
+hr.structure-separator {
+  border: none;
+  height: 1px;
+  background: var(--border-primary);
+  margin: 1rem 0;
+}
+
+/* ================================
+   Responsive Layout
+   ================================ */
+
+@media (max-width: 900px) {
+  .two-col {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .right-panel {
+    max-width: 100%;
+    order: -1;
+  }
+
+  .left-panel,
+  .right-panel {
+    height: auto;
+    min-height: 300px;
+  }
+}
