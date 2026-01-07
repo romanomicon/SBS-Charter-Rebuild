@@ -5,7 +5,7 @@
 export async function loadVerseRangesForBook(bookName, state) {
   if (!bookName) return;
 
-  const path = `books/cleaned/${bookName}_ranges.json`;
+  const path = `books/cleaned/${encodeURIComponent(bookName)}_ranges.json`;
 
   try {
     const res = await fetch(path);
@@ -28,3 +28,4 @@ export async function loadVerseRangesForBook(bookName, state) {
     console.error("Error loading verse ranges:", err);
   }
 }
+
