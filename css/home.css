@@ -3,50 +3,95 @@
    ================================ */
 
 .home-hero {
-  margin-bottom: 2rem;
-  color: var(--text-primary);
+  margin-bottom: 3rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-light));
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow-strong);
+  margin-top: -1rem;
+}
+
+.home-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-inverse);
+  margin-bottom: 0.5rem;
+}
+
+.home-hero p {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .books-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
 }
 
 /* Book tile */
 .book-tile {
   background: var(--bg-surface);
-  border-radius: var(--radius-large);
-  padding: 1rem;
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-small);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-medium);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
-  border: 1px solid var(--border-primary);
+  transition: all 0.25s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-primary);
+  transition: width 0.25s ease;
+  z-index: 1;
 }
 
 .book-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  background: var(--toast-bg);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-strong);
+  background: var(--accent-primary);
+}
+
+.book-tile:hover::before {
+  width: 100%;
 }
 
 .book-tile:hover .book-title,
 .book-tile:hover .book-meta {
-  color: var(--toast-text);
+  color: var(--text-inverse);
+  z-index: 2;
 }
 
 .book-title {
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 18px;
   color: var(--text-primary);
   margin: 0 0 8px;
-  transition: color 0.2s;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 2;
 }
 
 .book-meta {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  transition: color 0.2s;
+  transition: all 0.25s ease;
+  position: relative;
+  z-index: 2;
 }
 
 /* ================================

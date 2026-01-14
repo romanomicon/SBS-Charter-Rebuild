@@ -13,7 +13,7 @@ import { scheduleAutosave } from "./autosave.js";
    CREATION
 ========================= */
 
-export function addSegment(parIndex) {
+export function addSegment(parIndex, fromRecursion = false) {
   if (state.segments.some(s => s.paragraphIndexes.includes(parIndex))) return;
 
   state.segments.push({
@@ -23,10 +23,15 @@ export function addSegment(parIndex) {
     sectionId: null
   });
 
-  scheduleAutosave();
+  // Also create at first paragraph (index 0) if not already there
+  if (!fromRecursion && parIndex !== 0) {
+    addSegment(0, true);
+  }
+
+  if (!fromRecursion) scheduleAutosave();
 }
 
-export function addSection(parIndex, fromDivision = false, divisionId = null) {
+export function addSection(parIndex, fromDivision = false, divisionId = null, fromRecursion = false) {
   if (state.sections.some(s => s.paragraphIndexes.includes(parIndex))) return;
 
   const sectionId = ++state.ids.section;
@@ -55,10 +60,15 @@ export function addSection(parIndex, fromDivision = false, divisionId = null) {
     segment.sectionId = sectionId;
   }
 
-  if (!fromDivision) scheduleAutosave();
+  // Also create at first paragraph (index 0) if not already there
+  if (!fromRecursion && parIndex !== 0) {
+    addSection(0, fromDivision, divisionId, true);
+  }
+
+  if (!fromDivision && !fromRecursion) scheduleAutosave();
 }
 
-export function addDivision(parIndex) {
+export function addDivision(parIndex, fromRecursion = false) {
   if (state.divisions.some(d => d.paragraphIndexes.includes(parIndex))) return;
 
   const divisionId = ++state.ids.division;
@@ -70,9 +80,14 @@ export function addDivision(parIndex) {
   });
 
   // A roof requires walls
-  addSection(parIndex, true, divisionId);
+  addSection(parIndex, true, divisionId, false);
 
-  scheduleAutosave();
+  // Also create at first paragraph (index 0) if not already there
+  if (!fromRecursion && parIndex !== 0) {
+    addDivision(0, true);
+  }
+
+  if (!fromRecursion) scheduleAutosave();
 }
 
 /* =========================

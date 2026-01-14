@@ -37,6 +37,7 @@ export function buildSegmentPage(docx, state, seg, segmentsSorted) {
     const p = paragraphs[i];
 
     rows.push(new docx.TableRow({
+      height: { value: 350, rule: docx.HeightRule.EXACT },
       children: [
         mergedCell(docx, mergeState, 33),
         borderedCell(docx, [

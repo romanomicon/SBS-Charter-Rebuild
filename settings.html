@@ -4,15 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Settings – Bible Flow</title>
-  
+
   <!-- Load theme variables FIRST -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/settings.css">
-  
+  <link rel="stylesheet" href="css/mobile.css">
+
   <script>
     // Apply saved theme immediately
-    const savedPreset = localStorage.getItem('themePreset') || 'green';
+    const savedPreset = localStorage.getItem('themePreset') || 'grayscale';
     document.documentElement.setAttribute('data-preset', savedPreset);
   </script>
 </head>
@@ -20,10 +24,11 @@
 <body>
   <header class="global-nav">
     <div class="nav-inner">
-      <div class="brand">Bible Flow</div>
+      <div class="brand">Project Nehemiah</div>
       <nav class="nav-links">
         <a href="index.html">Home</a>
         <a href="settings.html">Settings</a>
+        <a href="account.html">Account</a>
         <a href="library.html">Library</a>
       </nav>
     </div>
@@ -53,6 +58,12 @@
         </button>
         <button class="preset-button" data-preset="purple">
           💜 Purple Haze
+        </button>
+        <button class="preset-button" data-preset="grayscale">
+          ⚫ Grayscale
+        </button>
+        <button class="preset-button" data-preset="grayscale-inverted">
+          ⚪ Inverted
         </button>
       </div>
     </section>

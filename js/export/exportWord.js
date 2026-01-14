@@ -17,8 +17,43 @@ export function exportWord(state) {
 
   const doc = new docx.Document({
     sections: [
-      { children: [overviewTable] },
-      ...segmentSections
+      {
+        properties: {
+          page: {
+            size: {
+              orientation: docx.PageOrientation.PORTRAIT,
+              width: 11906,
+              height: 16838
+            },
+            margin: {
+              top: 284,
+              right: 284,
+              bottom: 284,
+              left: 284
+            }
+          },
+          type: docx.SectionType.NEXT_PAGE
+        },
+        children: [overviewTable]
+      },
+      ...segmentSections.map(section => ({
+        ...section,
+        properties: {
+          page: {
+            size: {
+              orientation: docx.PageOrientation.PORTRAIT,
+              width: 11906,
+              height: 16838
+            },
+            margin: {
+              top: 284,
+              right: 284,
+              bottom: 284,
+              left: 284
+            }
+          }
+        }
+      }))
     ]
   });
 

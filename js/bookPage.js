@@ -63,6 +63,12 @@ function finalizeAndRender() {
   state.sections ||= [];
   state.segments ||= [];
 
+  // Render book title at the top
+  const bookPageTitle = document.getElementById("bookPageTitle");
+  if (bookPageTitle) {
+    bookPageTitle.textContent = state.bookTitle || state.bookName || "Book";
+  }
+
   renderParagraphRows();
   renderBookInfoInputs();
   renderStructure();

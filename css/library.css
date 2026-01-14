@@ -3,9 +3,7 @@
    ================================ */
 
 #book-library {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 0 1.25rem;
+  width: 100%;
 }
 
 .books-grid {
@@ -18,24 +16,51 @@
 .book-tile {
   position: relative;
   background: var(--bg-surface);
-  border-radius: var(--radius-large);
-  padding: 16px;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: var(--radius-small);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.25s ease;
   cursor: pointer;
-  border: 1px solid var(--border-primary);
+  border: none;
+  overflow: hidden;
+}
+
+.book-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-primary);
+  transition: width 0.25s ease;
+  z-index: 1;
 }
 
 .book-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-strong);
+  background: var(--accent-primary);
+}
+
+.book-tile:hover::before {
+  width: 100%;
 }
 
 .book-tile h4 {
   margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.book-tile:hover h4 {
+  color: var(--text-inverse);
 }
 
 /* Delete book button */
@@ -43,17 +68,19 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: 50%;
-  background: transparent;
+  border-radius: var(--radius-small);
+  background: var(--color-danger);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.15s ease, background 0.15s ease;
+  opacity: 0;
+  transition: all 0.25s ease;
+  z-index: 3;
+  box-shadow: var(--shadow-medium);
 }
 
 .book-tile:hover .delete-book {
@@ -61,7 +88,9 @@
 }
 
 .delete-book:hover {
-  background: rgba(192, 57, 43, 0.12);
+  background: var(--color-danger-light);
+  transform: scale(1.15);
+  box-shadow: var(--shadow-strong);
 }
 
 .delete-book::before {
@@ -85,14 +114,15 @@
   opacity: 0;
   background: var(--toast-bg);
   color: var(--toast-text);
-  padding: 10px 16px;
-  border-radius: var(--radius-medium);
+  padding: 16px 24px;
+  border-radius: var(--radius-small);
+  border: 2px solid var(--accent-primary);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
   box-shadow: var(--shadow-strong);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease;
   z-index: 1000;
 }
 

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Account – Project Nehemiah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/mobile.css">
+
+  <script>
+    // Apply saved theme immediately
+    const savedPreset = localStorage.getItem('themePreset') || 'grayscale';
+    document.documentElement.setAttribute('data-preset', savedPreset);
+  </script>
+</head>
+
+<body>
+  <header class="global-nav">
+    <div class="nav-inner">
+      <div class="brand">Project Nehemiah</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="settings.html">Settings</a>
+        <a href="account.html">Account</a>
+        <a href="library.html">Library</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container settings-page">
+    <h1>Account</h1>
+    <p class="muted">Manage your account settings and preferences</p>
+
+    <!-- Profile Information -->
+    <section class="settings-card">
+      <h2>👤 Profile Information</h2>
+      <div class="setting-row">
+        <div>
+          <label>Full Name</label>
+          <div class="description">Your display name across the application</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <label>Email Address</label>
+          <div class="description">Your primary email for notifications</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <label>Profile Picture</label>
+          <div class="description">Upload a photo to personalize your account</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+    </section>
+
+    <!-- Data & Privacy -->
+    <section class="settings-card">
+      <h2>🛡️ Data & Privacy</h2>
+      <div class="setting-row">
+        <div>
+          <label>Export Your Data</label>
+          <div class="description">Download a copy of your account data</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <label>Privacy Settings</label>
+          <div class="description">Control who can see your information</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <label>Delete Account</label>
+          <div class="description">Permanently remove your account and data</div>
+        </div>
+        <div style="color: var(--text-muted); font-style: italic;">Coming Soon</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Account features are currently under development
+  </footer>
+</body>
+</html>

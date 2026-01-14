@@ -8,18 +8,27 @@
 
 .settings-card {
   background: var(--bg-surface);
-  border-radius: var(--radius-default);
-  padding: 1.25rem;
-  box-shadow: var(--shadow-soft);
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-small);
+  padding: 0;
+  box-shadow: var(--shadow-strong);
+  margin-bottom: 2rem;
+  border: none;
+  overflow: hidden;
 }
 
 .settings-card h2 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin: 0;
+  padding: 1.5rem 2rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-card > :not(h2) {
+  padding: 0 2rem 2rem 2rem;
 }
 
 .setting-row {
@@ -58,28 +67,35 @@
 }
 
 .preset-button {
-  padding: 12px 16px;
+  padding: 14px 20px;
   border: 2px solid var(--border-primary);
-  border-radius: var(--radius-medium);
+  border-radius: var(--radius-small);
   background-color: var(--bg-surface);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-weight: 500;
+  font-weight: 700;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-soft);
 }
 
 .preset-button:hover {
   background-color: var(--bg-hover);
   border-color: var(--accent-primary);
-  transform: translateY(-1px);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
 }
 
 .preset-button.active {
-  border-color: var(--accent-primary);
   background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
   color: var(--text-inverse);
-  box-shadow: 0 2px 8px rgba(105, 160, 191, 0.3);
+  box-shadow: var(--shadow-strong);
+  transform: scale(1.05);
 }
 
 /* ================================
@@ -124,12 +140,19 @@
 }
 
 input[type="color"] {
-  width: 50px;
-  height: 40px;
-  border: 1px solid var(--border-primary);
+  width: 60px;
+  height: 50px;
+  border: 2px solid var(--border-primary);
   border-radius: var(--radius-small);
   cursor: pointer;
   background: var(--bg-surface);
+  transition: all 0.15s ease;
+}
+
+input[type="color"]:hover {
+  border-color: var(--accent-primary);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-soft);
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
