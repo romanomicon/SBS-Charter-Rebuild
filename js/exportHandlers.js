@@ -13,11 +13,23 @@ import { exportHTML } from "./export/exportHTML.js";
 // Track preview window for auto-refresh
 let previewWindow = null;
 
+// Expose exportWord function globally so preview window can call it
+window.triggerWordExport = () => {
+  exportWord(state);
+};
+
 // Listen for messages from preview window
 window.addEventListener('message', (event) => {
   if (event.data.type === 'PREVIEW_SYNC') {
     applyPreviewChanges(event.data.changes);
   } else if (event.data.type === 'EXPORT_WORD') {
+    exportWord(state);
+  }
+});
+
+// Listen for localStorage trigger from preview window
+window.addEventListener('storage', (event) => {
+  if (event.key === 'sbs-export-word-trigger') {
     exportWord(state);
   }
 });
