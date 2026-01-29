@@ -75,11 +75,12 @@ function compactBorderedCell(docx, children, opts = {}) {
  * mergeType "continue" = continue the merge from previous row
  */
 function compactMergedCell(docx, mergeType, widthDXA) {
+  const VerticalMerge = docx.VerticalMergeType || docx.VerticalMerge;
   return compactBorderedCell(
     docx,
     [new docx.Paragraph("")],
     {
-      verticalMerge: mergeType === "restart" ? docx.VerticalMerge.RESTART : docx.VerticalMerge.CONTINUE,
+      verticalMerge: mergeType === "restart" ? VerticalMerge.RESTART : VerticalMerge.CONTINUE,
       width: {
         size: widthDXA,
         type: docx.WidthType.DXA
@@ -93,6 +94,14 @@ function compactMergedCell(docx, mergeType, widthDXA) {
  * Used for division/section/segment titles in the overview table
  */
 function compactCenteredCell(docx, text, widthDXA, fontSize, mergeType = null) {
+  const VerticalMerge = docx.VerticalMergeType || docx.VerticalMerge;
+  let verticalMergeValue = undefined;
+  if (mergeType === "restart") {
+    verticalMergeValue = VerticalMerge.RESTART;
+  } else if (mergeType === "continue") {
+    verticalMergeValue = VerticalMerge.CONTINUE;
+  }
+
   return compactBorderedCell(
     docx,
     [
@@ -109,8 +118,46 @@ function compactCenteredCell(docx, text, widthDXA, fontSize, mergeType = null) {
       })
     ],
     {
-      verticalMerge: mergeType === "restart" ? docx.VerticalMerge.RESTART : (mergeType === "continue" ? docx.VerticalMerge.CONTINUE : undefined),
+      verticalMerge: verticalMergeValue,
       verticalAlign: docx.VerticalAlign.CENTER,
+      width: {
+        size: widthDXA,
+        type: docx.WidthType.DXA
+      }
+    }
+  );
+}
+
+/**
+ * Creates a compact top-left aligned text cell (for division/section titles that span rows)
+ */
+function compactTopLeftCell(docx, text, widthDXA, fontSize, mergeType = null) {
+  const VerticalMerge = docx.VerticalMergeType || docx.VerticalMerge;
+  let verticalMergeValue = undefined;
+  if (mergeType === "restart") {
+    verticalMergeValue = VerticalMerge.RESTART;
+  } else if (mergeType === "continue") {
+    verticalMergeValue = VerticalMerge.CONTINUE;
+  }
+
+  return compactBorderedCell(
+    docx,
+    [
+      new docx.Paragraph({
+        alignment: docx.AlignmentType.LEFT,
+        spacing: { before: 0, after: 0, line: 240, lineRule: docx.LineRuleType.AUTO },
+        children: [
+          new docx.TextRun({
+            text,
+            bold: true,
+            size: fontSize
+          })
+        ]
+      })
+    ],
+    {
+      verticalMerge: verticalMergeValue,
+      verticalAlign: docx.VerticalAlign.TOP,
       width: {
         size: widthDXA,
         type: docx.WidthType.DXA
@@ -123,7 +170,7 @@ function compactCenteredCell(docx, text, widthDXA, fontSize, mergeType = null) {
 ========================================================================
 MAIN FUNCTION: buildOverviewPage
 ========================================================================
-This function is called by exportWord.js to create the overview table.
+This function is called by exportWord.js to create the overview content.
 
 PARAMETERS:
   docx - The docx library instance (window.docx)
@@ -135,14 +182,16 @@ PARAMETERS:
     - state.keyVerse: String for the key verse
 
 RETURNS:
-  A docx.Table object ready to be added to the document
+  An array of docx elements: [title, keyVerse, table]
 
 HOW IT WORKS:
-  1. Sort segments by starting paragraph
-  2. Create lookup maps for sections and divisions
-  3. Build header row (Division | Section | Segment | Key Verse)
-  4. For each segment, add a row with appropriate merging
-  5. Return the complete table
+  1. Create title paragraph
+  2. Create key verse paragraph (separate from table)
+  3. Sort segments by starting paragraph
+  4. Use position-based lookup for divisions/sections
+  5. Build header row (Division | Section | Segment)
+  6. For each segment, add a row with appropriate merging
+  7. Return array of elements
 ========================================================================
 */
 export function buildOverviewPage(docx, state) {
@@ -151,115 +200,143 @@ export function buildOverviewPage(docx, state) {
   const totalParagraphs = paragraphs.length;
 
   // Sort segments by their starting paragraph (earliest first)
-  // This ensures they appear in book order in the table
   const segmentsSorted = [...state.segments]
     .sort((a, b) => computeSegStart(a) - computeSegStart(b));
 
-  // Create lookup maps for fast access by ID
-  // Instead of searching arrays, we can do: sectionsById[id]
-  const sectionsById = Object.fromEntries(
-    state.sections.map(s => [s.id, s])
-  );
-  const divisionsById = Object.fromEntries(
-    state.divisions.map(d => [d.id, d])
-  );
+  // Sort divisions and sections by their start position for position-based lookup
+  const divisionsSorted = [...state.divisions].sort((a, b) => {
+    const aStart = Math.min(...a.paragraphIndexes);
+    const bStart = Math.min(...b.paragraphIndexes);
+    return aStart - bStart;
+  });
+
+  const sectionsSorted = [...state.sections].sort((a, b) => {
+    const aStart = Math.min(...a.paragraphIndexes);
+    const bStart = Math.min(...b.paragraphIndexes);
+    return aStart - bStart;
+  });
+
+  // Find division by position (the division whose start is <= segment start)
+  function findDivisionForSegment(segStart) {
+    let result = null;
+    for (const div of divisionsSorted) {
+      const divStart = Math.min(...div.paragraphIndexes);
+      if (divStart <= segStart) {
+        result = div;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  // Find section by position (the section whose start is <= segment start)
+  function findSectionForSegment(segStart) {
+    let result = null;
+    for (const sec of sectionsSorted) {
+      const secStart = Math.min(...sec.paragraphIndexes);
+      if (secStart <= segStart) {
+        result = sec;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  // Helper to get start position for comparison
+  const getDivStart = (div) => div ? Math.min(...div.paragraphIndexes) : -1;
+  const getSecStart = (sec) => sec ? Math.min(...sec.paragraphIndexes) : -1;
 
   /*
   ---- COLUMN WIDTHS ----
   These are in DXA units (1440 DXA = 1 inch)
-
-  CURRENT WIDTHS:
-    Division: 3000 DXA ≈ 2.08 inches
-    Section:  3000 DXA ≈ 2.08 inches
-    Segment:  3000 DXA ≈ 2.08 inches
-    Key Verse: 1701 DXA ≈ 1.18 inches
-    TOTAL:    10701 DXA ≈ 7.43 inches
-
-  TO ADJUST: Change these values
-  TIP: Keep total under 11906 DXA (page width)
+  Now only 3 columns since Key Verse is separate
   */
-  const DIV_W = 3000;
-  const SEC_W = 3000;
-  const SEG_W = 3000;
-  const KEY_W = 1701;
-  const TABLE_W = DIV_W + SEC_W + SEG_W + KEY_W;
+  const DIV_W = 3500;
+  const SEC_W = 3500;
+  const SEG_W = 3500;
 
   const rows = [];
-
-  // Font size for all text in the table
-  // ADJUST THIS to make text larger (increase) or smaller (decrease)
   const fontSize = 18;
 
-  // ---- Header row ----
+  // ---- Header row (3 columns only) ----
   rows.push(
     new docx.TableRow({
       children: [
         compactCenteredCell(docx, "Division", DIV_W, fontSize),
         compactCenteredCell(docx, "Section", SEC_W, fontSize),
-        compactCenteredCell(docx, "Segment", SEG_W, fontSize),
-        new docx.TableCell({
-          children: [
-            new docx.Paragraph({
-              alignment: docx.AlignmentType.CENTER,
-              spacing: { before: 0, after: 0, line: 240, lineRule: docx.LineRuleType.AUTO },
-              children: [
-                new docx.TextRun({
-                  text: `Key verse: ${safeText(state.keyVerse) || ""}`,
-                  bold: true,
-                  italic: true,
-                  size: fontSize
-                })
-              ]
-            })
-          ],
-          width: { size: KEY_W, type: docx.WidthType.DXA },
-          verticalMerge: docx.VerticalMerge.RESTART,
-          margins: { top: 60, bottom: 60, left: 80, right: 80 },
-          borders: {
-            top: { style: "single", size: 4 },
-            bottom: { style: "single", size: 4 },
-            left: { style: "single", size: 4 },
-            right: { style: "single", size: 4 }
-          }
-        })
+        compactCenteredCell(docx, "Segment", SEG_W, fontSize)
       ]
     })
   );
 
-  let lastDiv = null;
-  let lastSec = null;
+  // Pre-calculate row data with division and section info using position-based lookup
+  const rowData = segmentsSorted.map(seg => {
+    const segStart = computeSegStart(seg);
+    const segEnd = computeSegEnd(seg, segmentsSorted, totalParagraphs);
+    const sec = findSectionForSegment(segStart);
+    const div = findDivisionForSegment(segStart);
+    const paragraphCount = segEnd - segStart + 1;
+    return { seg, sec, div, divStart: getDivStart(div), secStart: getSecStart(sec), paragraphCount };
+  });
 
-  segmentsSorted.forEach(seg => {
-    const sec = sectionsById[seg.sectionId];
-    const div = sec ? divisionsById[sec.divisionId] : null;
+  // Calculate total "natural" height and apply scaling if needed
+  const heightPerParagraph = 200; // Base height per paragraph in DXA
+  const minRowHeight = 400; // Minimum row height in DXA
+  const maxTableHeight = 14000; // Max table height in DXA (fits on page with title, key verse, margins)
+  const headerHeight = 400; // Approximate header row height in DXA
+
+  const totalNaturalHeight = rowData.reduce((sum, row) => {
+    return sum + Math.max(minRowHeight, row.paragraphCount * heightPerParagraph);
+  }, 0) + headerHeight;
+
+  // Scale factor to fit within page (1.0 = no scaling needed)
+  const heightScale = totalNaturalHeight > maxTableHeight
+    ? (maxTableHeight - headerHeight) / (totalNaturalHeight - headerHeight)
+    : 1.0;
+
+  let lastDivStart = null;
+  let lastSecStart = null;
+
+  rowData.forEach(row => {
+    const { seg, sec, div, divStart, secStart, paragraphCount } = row;
 
     const segStart = computeSegStart(seg);
     const segEnd = computeSegEnd(seg, segmentsSorted, totalParagraphs);
     const range = humanRangeFromIdx(segStart, segEnd, paragraphs);
 
+    // Calculate row height based on paragraph count, scaled to fit page
+    const naturalHeight = Math.max(minRowHeight, paragraphCount * heightPerParagraph);
+    const rowHeight = Math.round(naturalHeight * heightScale);
+
     rows.push(
       new docx.TableRow({
+        height: { value: rowHeight, rule: docx.HeightRule.ATLEAST },
         children: [
-          div?.id !== lastDiv
-            ? compactCenteredCell(
+          // Division cell - compare by start position instead of ID (top-left aligned)
+          divStart !== lastDivStart
+            ? compactTopLeftCell(
                 docx,
-                safeText(div?.title),
+                safeText(div?.title) || `Division ${div?.id}`,
                 DIV_W,
                 fontSize,
                 "restart"
               )
             : compactMergedCell(docx, "continue", DIV_W),
 
-          sec?.id !== lastSec
-            ? compactCenteredCell(
+          // Section cell - compare by start position instead of ID (top-left aligned)
+          secStart !== lastSecStart
+            ? compactTopLeftCell(
                 docx,
-                safeText(sec?.title),
+                safeText(sec?.title) || `Section ${sec?.id}`,
                 SEC_W,
                 fontSize,
                 "restart"
               )
             : compactMergedCell(docx, "continue", SEC_W),
 
+          // Segment cell
           compactBorderedCell(
             docx,
             [
@@ -267,7 +344,7 @@ export function buildOverviewPage(docx, state) {
                 spacing: { before: 0, after: 0, line: 240, lineRule: docx.LineRuleType.AUTO },
                 children: [
                   new docx.TextRun({
-                    text: safeText(seg.title),
+                    text: safeText(seg.title) || `Segment ${seg.id}`,
                     bold: true,
                     size: fontSize
                   })
@@ -289,35 +366,63 @@ export function buildOverviewPage(docx, state) {
                 type: docx.WidthType.DXA
               }
             }
-          ),
-
-          // Key verse column - continue vertical merge
-          new docx.TableCell({
-            children: [new docx.Paragraph("")],
-            width: { size: KEY_W, type: docx.WidthType.DXA },
-            verticalMerge: docx.VerticalMerge.CONTINUE,
-            margins: { top: 60, bottom: 60, left: 80, right: 80 },
-            borders: {
-              top: { style: "single", size: 4 },
-              bottom: { style: "single", size: 4 },
-              left: { style: "single", size: 4 },
-              right: { style: "single", size: 4 }
-            }
-          })
+          )
         ]
       })
     );
 
-    lastDiv = div?.id;
-    lastSec = sec?.id;
+    lastDivStart = divStart;
+    lastSecStart = secStart;
   });
 
-  return new docx.Table({
+  // Build the title paragraph
+  const titleParagraph = new docx.Paragraph({
+    alignment: docx.AlignmentType.CENTER,
+    spacing: { after: 200 },
+    children: [
+      new docx.TextRun({
+        text: `${safeText(state.bookName)} - Structure Overview`,
+        bold: true,
+        size: 32
+      })
+    ]
+  });
+
+  // Build the key verse paragraph (separate from table) - simple black and white
+  const keyVerseParagraph = new docx.Paragraph({
+    alignment: docx.AlignmentType.CENTER,
+    spacing: { before: 100, after: 200 },
+    border: {
+      top: { style: docx.BorderStyle.SINGLE, size: 4, color: "000000" },
+      bottom: { style: docx.BorderStyle.SINGLE, size: 4, color: "000000" },
+      left: { style: docx.BorderStyle.SINGLE, size: 4, color: "000000" },
+      right: { style: docx.BorderStyle.SINGLE, size: 4, color: "000000" }
+    },
+    children: [
+      new docx.TextRun({
+        text: "Key verse: ",
+        bold: true,
+        italics: true,
+        size: 18
+      }),
+      new docx.TextRun({
+        text: safeText(state.keyVerse) || "",
+        italics: true,
+        size: 18
+      })
+    ]
+  });
+
+  // Build the table
+  const table = new docx.Table({
     width: {
-      size: 95,
+      size: 100,
       type: docx.WidthType.PERCENTAGE
     },
     layout: docx.TableLayoutType.AUTOFIT,
     rows
   });
+
+  // Return array of elements: title, key verse, then table
+  return [titleParagraph, keyVerseParagraph, table];
 }

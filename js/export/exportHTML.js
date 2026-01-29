@@ -1,18 +1,12 @@
 /*
 ========================================================================
-📄 HTML EXPORT - LIVE PREVIEW VERSION
+HTML EXPORT - INTEGRATED PREVIEW
 ========================================================================
-PURPOSE: Creates an HTML version of the book structure that can be
-         previewed in the browser and edited before Word export.
+PURPOSE: Creates an HTML preview that:
+  1. Matches the main website's navigation and styling
+  2. Shows exactly what the Word export will look like (no extra aesthetics)
 
-BENEFITS:
-- Instant preview without downloading
-- Live editing of content
-- See exact layout before exporting to Word
-- Print to PDF if needed
-
-USAGE:
-  exportHTML(state) - Opens preview in new tab/window
+This preview is part of the main website experience, not a standalone page.
 ========================================================================
 */
 
@@ -21,18 +15,18 @@ import { humanRangeFromIdx, safeText } from "./helpers/textUtils.js";
 
 /**
  * Creates an HTML preview of the book structure
- * Opens in a new window/tab for viewing and editing
+ * Opens in a new window/tab for viewing
+ * @param {Object} state - The application state
  * @returns {Window} The preview window reference
  */
 export function exportHTML(state) {
   const html = buildHTMLDocument(state);
 
-  // Open in new window
+  // Open blank window and write content
   const previewWindow = window.open('', '_blank');
   previewWindow.document.write(html);
   previewWindow.document.close();
 
-  // Return window reference for auto-refresh feature
   return previewWindow;
 }
 
@@ -40,7 +34,7 @@ export function exportHTML(state) {
  * Builds the complete HTML document
  */
 function buildHTMLDocument(state) {
-  const overviewTable = buildOverviewTableHTML(state);
+  const overviewContent = buildOverviewHTML(state);
   const segmentPages = buildSegmentPagesHTML(state);
 
   return `<!DOCTYPE html>
@@ -48,171 +42,199 @@ function buildHTMLDocument(state) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${safeText(state.bookName)} - Structure Preview</title>
+  <title>${safeText(state.bookName)} - Preview</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    ${getPreviewStyles()}
+    ${getStyles()}
   </style>
 </head>
 <body>
-  <header class="toolbar">
-    <div class="toolbar-brand">📖 ${safeText(state.bookName)}</div>
-    <div class="toolbar-actions">
-      <button onclick="window.print()" class="btn btn-primary">
-        🖨️ Print / PDF
-      </button>
-      <button onclick="exportToWord()" class="btn btn-success">
-        📄 Export to Word
-      </button>
-      <button onclick="toggleEditMode()" class="btn btn-secondary" id="editBtn">
-        ✏️ Enable Editing
-      </button>
-      <button onclick="syncChangesToMainApp()" class="btn btn-info" id="syncBtn">
-        🔄 Sync Changes
-      </button>
-      <select onchange="changeTheme(this.value)" class="theme-selector">
-        <option value="default">Default Theme</option>
-        <option value="compact">Compact Theme</option>
-        <option value="spacious">Spacious Theme</option>
-        <option value="minimal">Minimal Theme</option>
-      </select>
-      <button onclick="window.close()" class="btn btn-danger">
-        ❌ Close
-      </button>
+  <!-- Navigation matching main site -->
+  <header class="global-nav">
+    <div class="nav-inner">
+      <div class="brand">Project Nehemiah</div>
+      <nav class="nav-links">
+        <a href="index.html" target="_blank">Home</a>
+        <a href="library.html" target="_blank">Library</a>
+        <button onclick="window.print()" class="nav-btn">Print</button>
+        <button onclick="exportToWord()" class="nav-btn primary">Export Word</button>
+        <button onclick="window.close()" class="nav-btn">Close</button>
+      </nav>
     </div>
   </header>
 
-  <div class="page-container">
+  <main class="preview-container">
     <!-- Overview Page -->
-    <div class="page overview-page">
-      <h1 class="page-title">${safeText(state.bookName)} - Structure Overview</h1>
-      ${overviewTable}
-    </div>
+    <section class="page">
+      ${overviewContent}
+    </section>
 
     <!-- Segment Pages -->
     ${segmentPages}
-  </div>
+  </main>
+
+  <footer class="footer">
+    Preview of Word export - What you see here is what you get in the document
+  </footer>
 
   <script>
-    ${getPreviewScripts()}
+    function exportToWord() {
+      // Signal the main app to export via localStorage
+      localStorage.setItem('sbs-export-word-trigger', Date.now().toString());
+      // Redirect back to main app so download happens automatically
+      if (window.opener && !window.opener.closed) {
+        window.opener.focus();
+        window.close();
+      }
+    }
   </script>
 </body>
 </html>`;
 }
 
 /**
- * Builds the overview table HTML
+ * Builds the overview page HTML (matches Word export structure)
  */
-function buildOverviewTableHTML(state) {
+function buildOverviewHTML(state) {
   const paragraphs = state.paragraphs || [];
   const totalParagraphs = paragraphs.length;
 
   const segmentsSorted = [...state.segments]
     .sort((a, b) => computeSegStart(a) - computeSegStart(b));
 
-  const sectionsById = Object.fromEntries(
-    state.sections.map(s => [s.id, s])
-  );
-  const divisionsById = Object.fromEntries(
-    state.divisions.map(d => [d.id, d])
-  );
-
-  let tableHTML = `
-    <table class="overview-table">
-      <thead>
-        <tr>
-          <th>Division</th>
-          <th>Section</th>
-          <th>Segment</th>
-          <th rowspan="${segmentsSorted.length + 1}" class="key-verse-cell">
-            <div contenteditable="true">
-              <strong>Key verse:</strong><br>
-              ${safeText(state.keyVerse)}
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  let lastDiv = null;
-  let lastSec = null;
-  let divRowspan = 0;
-  let secRowspan = 0;
-
-  // Calculate rowspans
-  const divRowspans = {};
-  const secRowspans = {};
-
-  segmentsSorted.forEach(seg => {
-    const sec = sectionsById[seg.sectionId];
-    const div = sec ? divisionsById[sec.divisionId] : null;
-
-    if (div) {
-      divRowspans[div.id] = (divRowspans[div.id] || 0) + 1;
-    }
-    if (sec) {
-      secRowspans[sec.id] = (secRowspans[sec.id] || 0) + 1;
-    }
+  const divisionsSorted = [...state.divisions].sort((a, b) => {
+    const aStart = Math.min(...a.paragraphIndexes);
+    const bStart = Math.min(...b.paragraphIndexes);
+    return aStart - bStart;
   });
 
-  segmentsSorted.forEach((seg, idx) => {
-    const sec = sectionsById[seg.sectionId];
-    const div = sec ? divisionsById[sec.divisionId] : null;
+  const sectionsSorted = [...state.sections].sort((a, b) => {
+    const aStart = Math.min(...a.paragraphIndexes);
+    const bStart = Math.min(...b.paragraphIndexes);
+    return aStart - bStart;
+  });
+
+  function findDivisionForSegment(segStart) {
+    let result = null;
+    for (const div of divisionsSorted) {
+      const divStart = Math.min(...div.paragraphIndexes);
+      if (divStart <= segStart) {
+        result = div;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  function findSectionForSegment(segStart) {
+    let result = null;
+    for (const sec of sectionsSorted) {
+      const secStart = Math.min(...sec.paragraphIndexes);
+      if (secStart <= segStart) {
+        result = sec;
+      } else {
+        break;
+      }
+    }
+    return result;
+  }
+
+  const getDivStart = (div) => div ? Math.min(...div.paragraphIndexes) : -1;
+  const getSecStart = (sec) => sec ? Math.min(...sec.paragraphIndexes) : -1;
+
+  // Pre-calculate row data
+  const rowData = segmentsSorted.map(seg => {
+    const segStart = computeSegStart(seg);
+    const sec = findSectionForSegment(segStart);
+    const div = findDivisionForSegment(segStart);
+    return { seg, sec, div, divStart: getDivStart(div), secStart: getSecStart(sec) };
+  });
+
+  // Calculate rowspans
+  const rowMeta = rowData.map((row, idx) => {
+    const prevRow = idx > 0 ? rowData[idx - 1] : null;
+    const isNewDiv = !prevRow || (row.divStart !== prevRow.divStart);
+    const isNewSec = !prevRow || (row.secStart !== prevRow.secStart);
+
+    let divRowspan = 1;
+    if (isNewDiv) {
+      for (let j = idx + 1; j < rowData.length; j++) {
+        if (rowData[j].divStart === row.divStart) divRowspan++;
+        else break;
+      }
+    }
+
+    let secRowspan = 1;
+    if (isNewSec) {
+      for (let j = idx + 1; j < rowData.length; j++) {
+        if (rowData[j].secStart === row.secStart) secRowspan++;
+        else break;
+      }
+    }
+
+    return { isNewDiv, isNewSec, divRowspan, secRowspan };
+  });
+
+  // Build table rows
+  let tableRows = '';
+  rowData.forEach((row, idx) => {
+    const { seg, sec, div } = row;
+    const { isNewDiv, isNewSec, divRowspan, secRowspan } = rowMeta[idx];
 
     const segStart = computeSegStart(seg);
     const segEnd = computeSegEnd(seg, segmentsSorted, totalParagraphs);
     const range = humanRangeFromIdx(segStart, segEnd, paragraphs);
 
-    tableHTML += '<tr>';
+    tableRows += '<tr>';
 
-    // Division cell
-    if (div?.id !== lastDiv) {
-      const rowspan = div ? (divRowspans[div.id] || 1) : 1;
-      tableHTML += `
-        <td rowspan="${rowspan}" class="division-cell" contenteditable="true">
-          ${safeText(div?.title)}
-        </td>
-      `;
-      lastDiv = div?.id;
+    if (isNewDiv) {
+      const divTitle = safeText(div?.title) || `Division ${div?.id}`;
+      tableRows += `<td rowspan="${divRowspan}" class="cell-center"><strong>${divTitle}</strong></td>`;
     }
 
-    // Section cell
-    if (sec?.id !== lastSec) {
-      const rowspan = sec ? (secRowspans[sec.id] || 1) : 1;
-      tableHTML += `
-        <td rowspan="${rowspan}" class="section-cell" contenteditable="true">
-          ${safeText(sec?.title)}
-        </td>
-      `;
-      lastSec = sec?.id;
+    if (isNewSec) {
+      const secTitle = safeText(sec?.title) || `Section ${sec?.id}`;
+      tableRows += `<td rowspan="${secRowspan}" class="cell-center"><strong>${secTitle}</strong></td>`;
     }
 
-    // Segment cell
-    tableHTML += `
-      <td class="segment-cell">
-        <div contenteditable="true" class="segment-title">
-          ${safeText(seg.title)}
-        </div>
-        <div class="segment-range">${range}</div>
+    const segTitle = safeText(seg.title) || `Segment ${seg.id}`;
+    tableRows += `
+      <td>
+        <strong>${segTitle}</strong><br>
+        <span class="range">${range}</span>
       </td>
     `;
 
-    tableHTML += '</tr>';
+    tableRows += '</tr>';
   });
 
-  tableHTML += `
+  return `
+    <h1 class="title">${safeText(state.bookName)} - Structure Overview</h1>
+
+    <div class="key-verse">
+      <strong>Key verse:</strong> <em>${safeText(state.keyVerse)}</em>
+    </div>
+
+    <table class="structure-table">
+      <thead>
+        <tr>
+          <th>Division</th>
+          <th>Section</th>
+          <th>Segment</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRows}
       </tbody>
     </table>
   `;
-
-  return tableHTML;
 }
 
 /**
- * Builds the segment pages HTML
+ * Builds the segment pages HTML (matches Word export structure)
  */
 function buildSegmentPagesHTML(state) {
   const paragraphs = state.paragraphs || [];
@@ -226,39 +248,41 @@ function buildSegmentPagesHTML(state) {
   segmentsSorted.forEach(seg => {
     const segStart = computeSegStart(seg);
     const segEnd = computeSegEnd(seg, segmentsSorted, totalParagraphs);
+    const range = humanRangeFromIdx(segStart, segEnd, paragraphs);
 
-    html += `
-      <div class="page segment-page">
-        <h2 class="segment-title" contenteditable="true">${safeText(seg.title)}</h2>
-
-        <table class="segment-table">
-          <tbody>
-    `;
-
-    // Add paragraph rows
+    let rows = '';
     for (let i = segStart; i <= segEnd; i++) {
       const para = paragraphs[i];
       if (!para) continue;
 
-      html += `
+      rows += `
         <tr>
-          <td class="blank-column"></td>
-          <td class="content-column">
-            <div class="paragraph-header">
-              <span class="paragraph-range">${para.range}</span>
-              <span class="paragraph-title" contenteditable="true">${safeText(para.title)}</span>
-            </div>
-            <div class="writing-space" contenteditable="true"></div>
+          <td class="blank-col" rowspan="2"></td>
+          <td class="header-row">
+            <strong>${para.range}</strong>${para.title ? ' — ' + safeText(para.title) : ''}
           </td>
-          <td class="blank-column"></td>
+          <td class="blank-col" rowspan="2"></td>
+        </tr>
+        <tr>
+          <td class="writing-space"></td>
         </tr>
       `;
     }
 
+    const segTitle = safeText(seg.title) || `Segment ${seg.id}`;
     html += `
+      <section class="page">
+        <div class="segment-header">
+          <strong>${segTitle}</strong>
+        </div>
+        <div class="segment-range">${range}</div>
+
+        <table class="segment-table">
+          <tbody>
+            ${rows}
           </tbody>
         </table>
-      </div>
+      </section>
     `;
   });
 
@@ -266,9 +290,9 @@ function buildSegmentPagesHTML(state) {
 }
 
 /**
- * CSS styles for the preview
+ * Minimal CSS - matches Word output appearance with main site navigation
  */
-function getPreviewStyles() {
+function getStyles() {
   return `
     * {
       margin: 0;
@@ -278,517 +302,214 @@ function getPreviewStyles() {
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%);
-      min-height: 100vh;
-      padding: 0;
+      background: #f5f5f5;
+      color: #000;
+      line-height: 1.4;
     }
 
-    .toolbar {
+    /* Navigation - matches main site */
+    .global-nav {
       position: sticky;
       top: 0;
-      background: #1A73E8;
-      padding: 1rem 2rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      background: #212121;
+      z-index: 100;
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
-      z-index: 1000;
     }
 
-    .toolbar-brand {
-      font-family: 'Inter', sans-serif;
-      font-size: 1.25rem;
+    .brand {
       font-weight: 700;
-      color: white;
+      font-size: 1.1rem;
+      color: #fff;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .toolbar-actions {
+    .nav-links {
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      flex-wrap: wrap;
     }
 
-    .btn {
-      padding: 0.5rem 1rem;
-      border: 2px solid transparent;
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.5);
     }
 
-    .btn-primary { background: #1A73E8; color: white; border-color: #1A73E8; }
-    .btn-primary:hover { background: #1765CC; border-color: #1765CC; }
-
-    .btn-success { background: #1E8E3E; color: white; border-color: #1E8E3E; }
-    .btn-success:hover { background: #15803D; border-color: #15803D; }
-
-    .btn-secondary { background: #F8F9FA; color: #202124; border-color: #DADCE0; }
-    .btn-secondary:hover { background: #E8EAED; border-color: #1A73E8; color: #1A73E8; }
-
-    .btn-info { background: #0891B2; color: white; border-color: #0891B2; }
-    .btn-info:hover { background: #0E7490; border-color: #0E7490; }
-
-    .btn-warning { background: #F9AB00; color: #202124; border-color: #F9AB00; }
-    .btn-warning:hover { background: #EA9200; border-color: #EA9200; }
-
-    .btn-danger { background: #D93025; color: white; border-color: #D93025; }
-    .btn-danger:hover { background: #C5221F; border-color: #C5221F; }
-
-    .theme-selector {
-      padding: 0.5rem 1rem;
-      border: 2px solid #DADCE0;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      background: #F8F9FA;
-      color: #202124;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.2s ease;
+    .nav-btn.primary {
+      background: #fff;
+      color: #212121;
+      border-color: #fff;
     }
 
-    .theme-selector:hover {
-      border-color: #1A73E8;
-      color: #1A73E8;
+    .nav-btn.primary:hover {
+      background: #e0e0e0;
     }
 
-    .page-container {
+    /* Preview container */
+    .preview-container {
       max-width: 8.5in;
-      margin: 2rem auto;
+      margin: 1.5rem auto;
       padding: 0 1rem;
     }
 
+    /* Page styling - matches Word document appearance */
     .page {
-      background: white;
+      background: #fff;
       padding: 0.5in;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 12px rgba(60, 64, 67, 0.15);
-      border-radius: 4px;
-      min-height: 11in;
-      page-break-after: always;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
     }
 
-    .page-title {
-      font-family: 'Inter', sans-serif;
+    /* Title */
+    .title {
       text-align: center;
-      margin-bottom: 2rem;
-      font-size: 2rem;
-      font-weight: 700;
-      color: #202124;
-      letter-spacing: -0.5px;
-      padding-bottom: 1rem;
-      border-bottom: 3px solid #1A73E8;
+      font-size: 16pt;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
     }
 
-    /* Overview Table Styles */
-    .overview-table {
+    /* Key verse - simple box like Word */
+    .key-verse {
+      text-align: center;
+      padding: 0.4rem 0.8rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid #000;
+      font-size: 9pt;
+    }
+
+    /* Structure table - matches Word export */
+    .structure-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 1rem;
-      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+      font-size: 9pt;
     }
 
-    .overview-table th,
-    .overview-table td {
-      border: 2px solid #DADCE0;
-      padding: 1rem;
-      text-align: center;
+    .structure-table th,
+    .structure-table td {
+      border: 1px solid #000;
+      padding: 0.4rem;
       vertical-align: middle;
     }
 
-    .overview-table th {
-      background: #1A73E8;
-      color: white;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .structure-table th {
+      font-weight: bold;
+      text-align: center;
     }
 
-    .division-cell,
-    .section-cell {
-      font-weight: 700;
-      background: #F8F9FA;
-      font-family: 'Inter', sans-serif;
-      color: #202124;
+    .cell-center {
+      text-align: center;
     }
 
-    .segment-cell {
-      text-align: left;
-      background: white;
+    .range {
+      font-size: 9pt;
     }
 
-    .segment-title {
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: #202124;
-      font-family: 'Inter', sans-serif;
+    /* Segment pages */
+    .segment-header {
+      text-align: center;
+      padding: 0.4rem;
+      border: 1px solid #000;
+      margin-bottom: 0.25rem;
+      font-size: 10pt;
     }
 
     .segment-range {
-      font-size: 0.875rem;
-      color: #5F6368;
-      font-weight: 600;
-    }
-
-    .key-verse-cell {
-      background: #E6F4EA;
-      font-style: italic;
-      color: #1E8E3E;
-    }
-
-    /* Segment Page Styles */
-    .segment-page .segment-title {
-      font-family: 'Inter', sans-serif;
       text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-      padding: 1rem;
-      background: #1A73E8;
-      color: white;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(60, 64, 67, 0.15);
+      font-size: 9pt;
+      margin-bottom: 0.5rem;
     }
 
     .segment-table {
       width: 100%;
       border-collapse: collapse;
-      box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+      font-size: 9pt;
     }
 
     .segment-table td {
-      border: 2px solid #DADCE0;
-      padding: 1rem;
+      border: 1px solid #000;
+      padding: 0.3rem;
     }
 
-    .blank-column {
+    .blank-col {
       width: 20%;
-      background: #F8F9FA;
     }
 
-    .content-column {
-      width: 60%;
-      background: white;
-    }
-
-    .paragraph-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #E8EAED;
-    }
-
-    .paragraph-range {
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      color: #1A73E8;
-      font-size: 0.875rem;
-    }
-
-    .paragraph-title {
-      flex: 1;
-      margin-left: 1rem;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      color: #202124;
+    .header-row {
+      text-align: center;
     }
 
     .writing-space {
-      min-height: 120px;
-      padding: 0.75rem;
-      background: #F8F9FA;
-      border-radius: 4px;
-      font-family: 'Inter', sans-serif;
-      color: #202124;
-      line-height: 1.6;
+      height: 80px;
     }
 
-    /* Editable content styling */
-    [contenteditable="true"] {
-      outline: none;
-      position: relative;
-      transition: all 0.2s ease;
-    }
-
-    [contenteditable="true"]:hover {
-      background: #FFF9E6;
-    }
-
-    [contenteditable="true"]:focus {
-      background: #FFFBCC;
-      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
-      border-radius: 2px;
-    }
-
-    /* Theme: Compact */
-    .theme-compact .overview-table {
-      font-size: 14px;
-    }
-
-    .theme-compact .overview-table th,
-    .theme-compact .overview-table td {
-      padding: 8px;
-    }
-
-    .theme-compact .segment-table td {
-      padding: 6px;
-    }
-
-    .theme-compact .writing-space {
-      min-height: 60px;
-    }
-
-    /* Theme: Spacious */
-    .theme-spacious .overview-table {
-      font-size: 20px;
-    }
-
-    .theme-spacious .overview-table th,
-    .theme-spacious .overview-table td {
-      padding: 20px;
-    }
-
-    .theme-spacious .segment-table td {
-      padding: 15px;
-    }
-
-    .theme-spacious .writing-space {
-      min-height: 150px;
-    }
-
-    /* Theme: Minimal */
-    .theme-minimal .overview-table th,
-    .theme-minimal .overview-table td {
-      border: 1px solid #ddd;
-    }
-
-    .theme-minimal .overview-table th {
-      background: white;
-    }
-
-    .theme-minimal .division-cell,
-    .theme-minimal .section-cell {
-      background: white;
-    }
-
-    .theme-minimal .blank-column {
-      background: white;
-      border: 1px solid #ddd;
-    }
-
-    .theme-minimal .page {
-      box-shadow: none;
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      padding: 1rem;
+      margin-bottom: 2rem;
     }
 
     /* Print styles */
     @media print {
       body {
         background: white;
-        padding: 0;
       }
 
-      .toolbar {
-        display: none !important;
+      .global-nav,
+      .footer {
+        display: none;
+      }
+
+      .preview-container {
+        margin: 0;
+        padding: 0;
+        max-width: none;
       }
 
       .page {
+        border: none;
         margin: 0;
-        box-shadow: none;
+        padding: 0.5in;
         page-break-after: always;
       }
 
       .page:last-child {
         page-break-after: auto;
       }
-
-      [contenteditable="true"] {
-        background: transparent !important;
-        box-shadow: none !important;
-      }
     }
-  `;
-}
-
-/**
- * JavaScript for interactive preview
- */
-function getPreviewScripts() {
-  return `
-    let editMode = false;
-    let hasChanges = false;
-    let currentTheme = 'default';
-
-    function toggleEditMode() {
-      editMode = !editMode;
-      const editables = document.querySelectorAll('[contenteditable]');
-      const btn = document.getElementById('editBtn');
-
-      editables.forEach(el => {
-        el.contentEditable = editMode ? 'true' : 'false';
-      });
-
-      if (editMode) {
-        btn.textContent = '🔒 Disable Editing';
-        btn.classList.add('btn-warning');
-        btn.classList.remove('btn-secondary');
-      } else {
-        btn.textContent = '✏️ Enable Editing';
-        btn.classList.add('btn-secondary');
-        btn.classList.remove('btn-warning');
-      }
-    }
-
-    function syncChangesToMainApp() {
-      if (!window.opener || window.opener.closed) {
-        alert('Main app is closed. Please reopen it to sync changes.');
-        return;
-      }
-
-      try {
-        // Collect all changes
-        const changes = collectChanges();
-
-        // Send changes to main app
-        window.opener.postMessage({
-          type: 'PREVIEW_SYNC',
-          changes: changes
-        }, '*');
-
-        hasChanges = false;
-        alert('✅ Changes synced successfully!\\n\\nYou can now export to Word from the main app.');
-      } catch (error) {
-        console.error('Sync error:', error);
-        alert('❌ Failed to sync changes. Error: ' + error.message);
-      }
-    }
-
-    function collectChanges() {
-      const changes = {
-        keyVerse: null,
-        divisions: [],
-        sections: [],
-        segments: [],
-        paragraphs: []
-      };
-
-      // Collect key verse
-      const keyVerseEl = document.querySelector('.key-verse-cell [contenteditable]');
-      if (keyVerseEl) {
-        const text = keyVerseEl.textContent.replace(/Key verse:\\s*/i, '').trim();
-        changes.keyVerse = text;
-      }
-
-      // Collect division titles
-      document.querySelectorAll('.division-cell[contenteditable]').forEach((el, idx) => {
-        changes.divisions.push({
-          index: idx,
-          title: el.textContent.trim()
-        });
-      });
-
-      // Collect section titles
-      document.querySelectorAll('.section-cell[contenteditable]').forEach((el, idx) => {
-        changes.sections.push({
-          index: idx,
-          title: el.textContent.trim()
-        });
-      });
-
-      // Collect segment titles
-      document.querySelectorAll('.segment-title[contenteditable]').forEach((el, idx) => {
-        changes.segments.push({
-          index: idx,
-          title: el.textContent.trim()
-        });
-      });
-
-      // Collect paragraph titles
-      document.querySelectorAll('.paragraph-title[contenteditable]').forEach((el, idx) => {
-        changes.paragraphs.push({
-          index: idx,
-          title: el.textContent.trim()
-        });
-      });
-
-      return changes;
-    }
-
-    function changeTheme(theme) {
-      currentTheme = theme;
-      document.body.className = 'theme-' + theme;
-    }
-
-    function exportToWord() {
-      if (hasChanges) {
-        const sync = confirm('You have unsaved changes.\\n\\nSync changes to main app before exporting?');
-        if (sync) {
-          syncChangesToMainApp();
-          setTimeout(() => {
-            if (window.opener && !window.opener.closed) {
-              window.opener.postMessage({ type: 'EXPORT_WORD' }, '*');
-            }
-          }, 500);
-        }
-      } else {
-        if (window.opener && !window.opener.closed) {
-          window.opener.postMessage({ type: 'EXPORT_WORD' }, '*');
-          window.close();
-        } else {
-          alert('Main app is closed. Please reopen it to export.');
-        }
-      }
-    }
-
-    // Track changes
-    document.addEventListener('input', (e) => {
-      if (e.target.contentEditable === 'true') {
-        hasChanges = true;
-      }
-    });
-
-    // Initialize with editing disabled
-    document.addEventListener('DOMContentLoaded', () => {
-      const editables = document.querySelectorAll('[contenteditable]');
-      editables.forEach(el => {
-        el.contentEditable = 'false';
-      });
-
-      // Listen for refresh messages from main app
-      window.addEventListener('message', (event) => {
-        if (event.data.type === 'PREVIEW_REFRESH') {
-          if (confirm('Main app has updated content.\\n\\nRefresh preview? (Unsaved changes will be lost)')) {
-            location.reload();
-          }
-        }
-      });
-    });
-
-    // Warn before closing if content was edited
-    window.addEventListener('beforeunload', (e) => {
-      if (hasChanges) {
-        e.preventDefault();
-        e.returnValue = 'You have unsaved changes. Sync them before closing?';
-      }
-    });
   `;
 }

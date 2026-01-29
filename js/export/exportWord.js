@@ -9,7 +9,8 @@ export function exportWord(state) {
   const segmentsSorted = [...state.segments]
     .sort((a, b) => computeSegStart(a) - computeSegStart(b));
 
-  const overviewTable = buildOverviewPage(docx, state);
+  // buildOverviewPage now returns an array: [title, keyVerse, table]
+  const overviewElements = buildOverviewPage(docx, state);
 
   const segmentSections = segmentsSorted.map(seg => ({
     children: [buildSegmentPage(docx, state, seg, segmentsSorted)]
@@ -34,7 +35,7 @@ export function exportWord(state) {
           },
           type: docx.SectionType.NEXT_PAGE
         },
-        children: [overviewTable]
+        children: overviewElements  // Spread the array of elements
       },
       ...segmentSections.map(section => ({
         ...section,

@@ -12,12 +12,13 @@ export function buildSegmentPage(docx, state, seg, segmentsSorted) {
 
   const rows = [];
 
+  const segTitle = safeText(seg.title) || `Segment ${seg.id}`;
   rows.push(new docx.TableRow({
     children: [
       borderedCell(docx, [
         new docx.Paragraph({
           alignment: docx.AlignmentType.CENTER,
-          children: [new docx.TextRun({ text: safeText(seg.title), bold: true })]
+          children: [new docx.TextRun({ text: segTitle, bold: true })]
         })
       ], { columnSpan: 3 })
     ]
