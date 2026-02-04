@@ -1,7 +1,7 @@
 // debugSanityCheck.js
 import { listBooks, loadBook, isBookSaved } from "./storage.js";
 
-export function runSanityCheck() {
+export function runSanityCheck(books) {
   console.log("=== SANITY CHECK START ===");
 
   const savedBooks = listBooks();
@@ -14,27 +14,25 @@ export function runSanityCheck() {
 
       const loaded = loadBook(bookId);
       if (!loaded) {
-        console.error(`❌ Failed to load saved book by ID: ${bookId}`);
+        console.error(`Failed to load saved book by ID: ${bookId}`);
       } else {
-        console.log(`✅ Loaded successfully: ${loaded.bookTitle} (${loaded.bookName})`);
+        console.log(`Loaded successfully: ${loaded.bookTitle} (${loaded.bookName})`);
       }
 
       if (!isBookSaved(bookId)) {
-        console.error(`❌ Book not recognized as saved: ${bookId}`);
+        console.error(`Book not recognized as saved: ${bookId}`);
       } else {
-        console.log(`✔ Book correctly recognized as saved: ${bookId}`);
+        console.log(`Book correctly recognized as saved: ${bookId}`);
       }
     }
   }
 
-  if (typeof BOOKS !== "undefined" && Array.isArray(BOOKS)) {
+  if (Array.isArray(books)) {
     console.log("\nChecking all BOOKS array items:");
-    BOOKS.forEach(b => {
+    books.forEach(b => {
       const exists = isBookSaved(b);
-      console.log(`- ${b}: ${exists ? "Saved ✅" : "New ❌"}`);
+      console.log(`- ${b}: ${exists ? "Saved" : "New"}`);
     });
-  } else {
-    console.warn("BOOKS array not found for sanity check.");
   }
 
   console.log("=== SANITY CHECK END ===");

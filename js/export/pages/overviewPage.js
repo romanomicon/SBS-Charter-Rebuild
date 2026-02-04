@@ -284,7 +284,7 @@ export function buildOverviewPage(docx, state) {
   // Calculate total "natural" height and apply scaling if needed
   const heightPerParagraph = 200; // Base height per paragraph in DXA
   const minRowHeight = 400; // Minimum row height in DXA
-  const maxTableHeight = 14000; // Max table height in DXA (fits on page with title, key verse, margins)
+  const maxTableHeight = 14000; // Max table height in DXA for A4 page (16838 DXA total - margins - title - key verse)
   const headerHeight = 400; // Approximate header row height in DXA
 
   const totalNaturalHeight = rowData.reduce((sum, row) => {

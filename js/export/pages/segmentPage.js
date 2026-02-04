@@ -1,6 +1,6 @@
 import { computeSegStart, computeSegEnd } from "../helpers/segmentMath.js";
 import { humanRangeFromIdx, safeText } from "../helpers/textUtils.js";
-import { borderedCell, mergedCell } from "../helpers/docxUtils.js";
+import { borderedCell, mergedCell, mergedCellWithContent } from "../helpers/docxUtils.js";
 
 export function buildSegmentPage(docx, state, seg, segmentsSorted) {
   const paragraphs = state.paragraphs;
@@ -34,13 +34,18 @@ export function buildSegmentPage(docx, state, seg, segmentsSorted) {
 
   let mergeState = "restart";
 
+  // Get the side column notes from the segment (with HTML formatting)
+  const leftNote = seg.leftNote || '';
+  const rightNote = seg.rightNote || '';
+
   for (let i = segStart; i <= segEnd; i++) {
     const p = paragraphs[i];
 
     rows.push(new docx.TableRow({
       height: { value: 350, rule: docx.HeightRule.EXACT },
       children: [
-        mergedCell(docx, mergeState, 33),
+        // Left column - uses mergedCellWithContent for first row to include notes
+        mergedCellWithContent(docx, mergeState, 33, leftNote),
         borderedCell(docx, [
           new docx.Paragraph({
             alignment: docx.AlignmentType.CENTER,
@@ -50,15 +55,16 @@ export function buildSegmentPage(docx, state, seg, segmentsSorted) {
             })]
           })
         ], { width: { size: 34, type: docx.WidthType.PERCENTAGE } }),
-        mergedCell(docx, mergeState, 33)
+        // Right column - uses mergedCellWithContent for first row to include notes
+        mergedCellWithContent(docx, mergeState, 33, rightNote)
       ]
     }));
 
     rows.push(new docx.TableRow({
       children: [
-        mergedCell(docx, "continue", 33),
+        mergedCellWithContent(docx, "continue", 33),
         borderedCell(docx, [new docx.Paragraph(" "), new docx.Paragraph(" ")]),
-        mergedCell(docx, "continue", 33)
+        mergedCellWithContent(docx, "continue", 33)
       ]
     }));
 

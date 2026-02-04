@@ -1,0 +1,527 @@
+/* ================================
+   PREVIEW PAGE STYLES
+   Minimal styling to match Word export appearance
+   ================================ */
+
+/* Preview container - A4 width */
+.preview-container {
+  max-width: 8.27in;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+/* Loading state */
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+/* Page styling - A4 size (8.27in x 11.69in) */
+.preview-page {
+  background: var(--bg-primary);
+  padding: 0.5in;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-primary);
+  width: 8.27in;
+  min-height: 11.69in;
+  box-sizing: border-box;
+}
+
+/* Title */
+.preview-title {
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+/* Key verse - simple box like Word */
+.preview-key-verse {
+  text-align: center;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--text-primary);
+  font-size: 9pt;
+  color: var(--text-primary);
+}
+
+/* Structure table - matches Word export */
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+  color: var(--text-primary);
+}
+
+.preview-table th,
+.preview-table td {
+  border: 1px solid var(--text-primary);
+  padding: 0.4rem;
+  vertical-align: top;
+}
+
+.preview-table th {
+  font-weight: bold;
+  text-align: center;
+}
+
+.preview-table td strong {
+  display: block;
+}
+
+.preview-table .range {
+  font-size: 9pt;
+  color: var(--text-secondary);
+}
+
+/* Segment pages */
+.segment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem;
+  border: 1px solid var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 10pt;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.segment-header .segment-range {
+  font-size: 9pt;
+  color: var(--text-secondary);
+  margin-left: 1rem;
+}
+
+.segment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+  color: var(--text-primary);
+  table-layout: fixed;
+}
+
+.segment-table td {
+  border: 1px solid var(--text-primary);
+  padding: 0.3rem;
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Side columns - merged for entire segment */
+.segment-table .side-col {
+  width: 33.33%;
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Center column - paragraph headers and content */
+.segment-table .header-row,
+.segment-table .writing-space {
+  width: 33.33%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.segment-table .header-row {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.segment-table .writing-space {
+  min-height: 60px;
+  font-size: 9pt;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.segment-table .writing-space:empty::before {
+  content: "Click to add notes...";
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.segment-table .side-col:empty::before {
+  content: "...";
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Paragraph title placeholder */
+[data-type="para-title"]:empty::before {
+  content: "(click to add title)";
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Footer */
+.preview-footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Save status */
+.save-status {
+  color: var(--color-success);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dirty-status {
+  color: var(--color-warning);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Editable cells */
+[contenteditable="true"] {
+  outline: none;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 2px;
+  transition: background-color 0.15s;
+}
+
+[contenteditable="true"]:hover {
+  background-color: var(--bg-surface-muted);
+}
+
+[contenteditable="true"]:focus {
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ================================
+   Text Formatting Toolbar (Fixed at top)
+   ================================ */
+
+.format-toolbar-fixed {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  display: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.format-toolbar-fixed.visible {
+  display: flex;
+  align-items: center;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.format-toolbar-fixed .toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.format-toolbar-fixed button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+
+.format-toolbar-fixed button:hover {
+  background: var(--bg-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+.format-toolbar-fixed button.active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.format-toolbar-fixed .separator {
+  width: 1px;
+  height: 24px;
+  background: var(--border-primary);
+  margin: 0 8px;
+}
+
+.format-toolbar-fixed .highlight-picker {
+  position: relative;
+}
+
+.format-toolbar-fixed .highlight-colors {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+}
+
+.format-toolbar-fixed .fmt-bold { font-weight: 700; }
+.format-toolbar-fixed .fmt-italic { font-style: italic; }
+.format-toolbar-fixed .fmt-underline { text-decoration: underline; }
+.format-toolbar-fixed .fmt-strike { text-decoration: line-through; }
+
+/* Toolbar select dropdowns */
+.toolbar-select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  min-width: 70px;
+}
+
+.toolbar-select:hover {
+  border-color: var(--accent-primary);
+}
+
+.toolbar-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(var(--accent-primary-rgb, 59, 130, 246), 0.2);
+}
+
+/* Text color picker */
+.color-picker {
+  position: relative;
+}
+
+.color-picker button[data-cmd="textColor"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.color-icon {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.color-bar {
+  width: 16px;
+  height: 3px;
+  background-color: #000000;
+  border-radius: 1px;
+}
+
+.color-palette {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 8px;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 140px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+  z-index: 1000;
+}
+
+.color-palette.visible {
+  display: flex;
+}
+
+.color-palette button {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.color-palette button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Highlight color picker */
+.highlight-picker {
+  position: relative;
+}
+
+.highlight-colors {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 6px;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 4px;
+}
+
+.highlight-colors.visible {
+  display: flex;
+}
+
+.highlight-colors button {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+}
+
+.highlight-colors button:hover {
+  transform: scale(1.1);
+}
+
+.highlight-colors .remove-highlight {
+  width: 100%;
+  font-size: 11px;
+  height: auto;
+  padding: 4px;
+  margin-top: 4px;
+}
+
+/* Highlight colors */
+.highlight-yellow { background-color: #fff59d !important; }
+.highlight-green { background-color: #a5d6a7 !important; }
+.highlight-blue { background-color: #90caf9 !important; }
+.highlight-pink { background-color: #f48fb1 !important; }
+.highlight-orange { background-color: #ffcc80 !important; }
+.highlight-purple { background-color: #ce93d8 !important; }
+
+/* Format toolbar icons using text */
+.format-toolbar .fmt-bold { font-weight: 700; }
+.format-toolbar .fmt-italic { font-style: italic; }
+.format-toolbar .fmt-underline { text-decoration: underline; }
+.format-toolbar .fmt-strike { text-decoration: line-through; }
+
+/* Advanced editor toggle - styled as switch */
+.editor-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-small);
+  transition: all 0.2s ease;
+}
+
+.editor-toggle:hover {
+  color: var(--text-inverse);
+}
+
+.editor-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.editor-toggle input:checked + .toggle-switch {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.editor-toggle input:checked + .toggle-switch::after {
+  left: 18px;
+  background: var(--accent-primary);
+}
+
+.editor-toggle-label {
+  user-select: none;
+  font-weight: 500;
+}
+
+/* Print styles - A4 paper */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0.5in;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .global-nav,
+  .preview-footer,
+  .format-toolbar-fixed {
+    display: none !important;
+  }
+
+  .preview-container {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+
+  .preview-page {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: auto;
+    page-break-after: always;
+    box-shadow: none;
+  }
+
+  .preview-page:last-child {
+    page-break-after: auto;
+  }
+}

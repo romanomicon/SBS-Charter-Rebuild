@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Chart Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/preview.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <script>
+    // Apply saved theme immediately
+    const savedPreset = localStorage.getItem('themePreset') || 'grayscale';
+    document.documentElement.setAttribute('data-preset', savedPreset);
+  </script>
+</head>
+
+<body>
+  <!-- Global nav -->
+  <header class="global-nav">
+    <div class="nav-inner">
+      <div class="brand">Project Nehemiah</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="settings.html">Settings</a>
+        <a href="account.html">Account</a>
+        <a href="library.html">Library</a>
+      </nav>
+      <div class="nav-actions">
+        <a id="backToBookLink" href="book.html" class="nav-back-link">← Charter Builder</a>
+        <label class="editor-toggle" title="Show formatting toolbar">
+          <input type="checkbox" id="advancedEditorToggle">
+          <span class="toggle-switch"></span>
+          <span class="editor-toggle-label">Editor</span>
+        </label>
+        <span id="saveStatus" class="save-status">Saved</span>
+        <span id="dirtyStatus" class="dirty-status" style="display:none;">Unsaved</span>
+        <button id="saveBtn" class="btn nav-btn">Save</button>
+        <button id="printBtn" class="btn nav-btn">Print</button>
+        <button id="exportWordBtn" class="btn nav-btn primary">Export Word</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="preview-container">
+    <div id="previewContent">
+      <!-- Preview content will be rendered here by JS -->
+      <p class="loading-message">Loading preview...</p>
+    </div>
+  </main>
+
+  <footer class="preview-footer">
+    <p>Click any cell to edit. Toggle "Editor" to show the formatting toolbar. Keyboard shortcuts: Ctrl+B (bold), Ctrl+I (italic), Ctrl+U (underline).</p>
+  </footer>
+
+  <!-- External dependency for Word export -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/index.js"></script>
+
+  <!-- Preview page logic -->
+  <script type="module" src="js/previewPage.js"></script>
+
+</body>
+
+</html>
