@@ -46,10 +46,9 @@
   --shadow-strong: 0 4px 12px rgba(60, 64, 67, 0.2);
 
   /* Border Radius - Refined */
-  --radius-small: 4px;
-  --radius-medium: 6px;
-  --radius-large: 8px;
-  --radius-default: 6px;
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 14px;
 
   /* Structure Colors - Harmonious */
   --structure-division: #5F6B7C;
@@ -59,6 +58,10 @@
   /* Navigation */
   --nav-bg: rgba(255, 255, 255, 0.95);
   --nav-blur: saturate(180%) blur(10px);
+
+  /* Header (always dark for contrast) */
+  --header-bg: #202124;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -102,6 +105,10 @@
   --structure-segment: #A371F7;
 
   --nav-bg: rgba(26, 31, 41, 0.95);
+
+  /* Header */
+  --header-bg: #252B37;
+  --header-text: #E6EDF3;
 }
 
 /* ================================
@@ -138,6 +145,10 @@
   --shadow-soft: 0 1px 2px rgba(10, 61, 78, 0.08);
   --shadow-medium: 0 2px 6px rgba(10, 61, 78, 0.12);
   --shadow-strong: 0 4px 12px rgba(10, 61, 78, 0.16);
+
+  /* Header */
+  --header-bg: #0A3D4E;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -174,6 +185,10 @@
   --shadow-soft: 0 1px 2px rgba(31, 55, 34, 0.08);
   --shadow-medium: 0 2px 6px rgba(31, 55, 34, 0.12);
   --shadow-strong: 0 4px 12px rgba(31, 55, 34, 0.16);
+
+  /* Header */
+  --header-bg: #1F3722;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -210,6 +225,10 @@
   --shadow-soft: 0 1px 2px rgba(92, 45, 31, 0.08);
   --shadow-medium: 0 2px 6px rgba(92, 45, 31, 0.12);
   --shadow-strong: 0 4px 12px rgba(92, 45, 31, 0.16);
+
+  /* Header */
+  --header-bg: #5C2D1F;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -246,6 +265,10 @@
   --shadow-soft: 0 1px 2px rgba(59, 30, 84, 0.08);
   --shadow-medium: 0 2px 6px rgba(59, 30, 84, 0.12);
   --shadow-strong: 0 4px 12px rgba(59, 30, 84, 0.16);
+
+  /* Header */
+  --header-bg: #3B1E54;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -290,6 +313,10 @@
   --shadow-strong: 0 4px 12px rgba(0, 0, 0, 0.2);
 
   --nav-bg: rgba(33, 33, 33, 0.95);
+
+  /* Header */
+  --header-bg: #000000;
+  --header-text: #FFFFFF;
 }
 
 /* ================================
@@ -334,4 +361,8 @@
   --shadow-strong: 0 4px 12px rgba(0, 0, 0, 0.7);
 
   --nav-bg: rgba(224, 224, 224, 0.95);
+
+  /* Header */
+  --header-bg: #2A2A2A;
+  --header-text: #FFFFFF;
 }

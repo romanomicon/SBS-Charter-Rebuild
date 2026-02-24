@@ -3,39 +3,41 @@
    ================================ */
 
 .settings-page {
-  max-width: 600px;
+  width: 50%;
+  min-width: 400px;
+  margin: 0 auto;
 }
 
 .settings-card {
-  background: var(--bg-surface);
-  border-radius: var(--radius-small);
+  background: var(--bg-primary);
+  border-radius: var(--radius-large);
   padding: 0;
-  box-shadow: var(--shadow-strong);
-  margin-bottom: 2rem;
-  border: none;
+  box-shadow: var(--shadow-medium);
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-primary);
   overflow: hidden;
 }
 
 .settings-card h2 {
   margin: 0;
-  padding: 1.5rem 2rem;
-  font-size: 1.3rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  background: var(--accent-primary);
-  color: var(--text-inverse);
+  background: var(--header-bg);
+  color: var(--header-text);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .settings-card > :not(h2) {
-  padding: 0 2rem 2rem 2rem;
+  padding: 1.25rem 1.5rem;
 }
 
 .setting-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 0.85rem 1.5rem;
   border-bottom: 1px solid var(--border-secondary);
 }
 
@@ -44,15 +46,15 @@
 }
 
 .setting-row label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .setting-row .description {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
 }
 
 /* ================================
@@ -62,40 +64,35 @@
 .preset-selector {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
+  gap: 8px;
   margin-top: 12px;
 }
 
 .preset-button {
-  padding: 14px 20px;
-  border: 2px solid var(--border-primary);
+  padding: 12px 14px;
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-small);
   background-color: var(--bg-surface);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 700;
+  transition: all 0.15s ease;
+  font-weight: 600;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-size: 0.85rem;
-  box-shadow: var(--shadow-soft);
 }
 
 .preset-button:hover {
   background-color: var(--bg-hover);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 .preset-button.active {
-  background-color: var(--accent-primary);
-  border-color: var(--accent-primary);
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
   color: var(--text-inverse);
-  box-shadow: var(--shadow-strong);
-  transform: scale(1.05);
 }
 
 /* ================================
@@ -142,7 +139,7 @@
 input[type="color"] {
   width: 60px;
   height: 50px;
-  border: 2px solid var(--border-primary);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-small);
   cursor: pointer;
   background: var(--bg-surface);
@@ -151,8 +148,6 @@ input[type="color"] {
 
 input[type="color"]:hover {
   border-color: var(--accent-primary);
-  transform: scale(1.05);
-  box-shadow: var(--shadow-soft);
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -169,4 +164,284 @@ input[type="color"]::-webkit-color-swatch {
   font-size: 0.85rem;
   color: var(--text-secondary);
   flex: 1;
+}
+
+/* ================================
+   Settings Modal
+   ================================ */
+
+/* ── Backdrop — blurs content, leaves sidebar clear ─────────
+   z-index 190 keeps it below the sidebar (200) so the sidebar
+   remains fully interactive while the modal is open.          */
+.stg-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition:
+    opacity                 0.25s ease,
+    backdrop-filter         0.25s ease,
+    -webkit-backdrop-filter 0.25s ease;
+  z-index: 190;
+  pointer-events: none;
+}
+
+.stg-backdrop.stg-is-open {
+  opacity: 0.65;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+/* ── Modal panel ─────────────────────────────────────────────
+   z-index 191: above backdrop, below sidebar (200).
+   left: calc(50% + 30px) centres within the content area
+   beside the collapsed 60px sidebar.                          */
+.stg-modal {
+  position: fixed;
+  top: 50%;
+  left: calc(50% + 30px);
+  transform: translate(-50%, calc(-50% + 14px));
+  width: 90%;
+  max-width: 480px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-strong);
+  padding: 2.25rem;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity   0.25s ease,
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 191;
+}
+
+.stg-modal.stg-is-open {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+/* ── Close button ────────────────────────────────────────────
+   Matches the sb-toggle button conventions from sidebar.css.  */
+.stg-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-small);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  z-index: 1;
+}
+
+.stg-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.stg-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ── Watermark ───────────────────────────────────────────────
+   Same technique as the landing page NEHEMIAH watermark.      */
+.stg-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(4rem, 22vw, 13rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  opacity: 0.035;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* ── Header typography — mirrors landing/settings page hero ── */
+.stg-eyebrow {
+  position: relative;
+  z-index: 1;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 1rem 0;
+}
+
+.stg-headline {
+  position: relative;
+  z-index: 1;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem 0;
+}
+
+.stg-subheading {
+  position: relative;
+  z-index: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Ruled divider — matches landing-rule spec ───────────────  */
+.stg-rule {
+  position: relative;
+  z-index: 1;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--border-primary);
+  margin: 1.5rem 0;
+}
+
+/* ── Section label above preset grid ────────────────────────  */
+.stg-section-label {
+  position: relative;
+  z-index: 1;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+/* ── Swatch card grid — 3 columns ────────────────────────── */
+.stg-modal .preset-selector {
+  position: relative;
+  z-index: 1;
+  margin-top: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+/* ── Swatch card button ───────────────────────────────────── */
+.stg-modal .preset-button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0 6px 8px;
+  overflow: hidden;
+  height: auto;
+  border-radius: var(--radius-medium);
+  border: 2px solid var(--border-primary);
+  background: var(--bg-surface);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.57rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.stg-modal .preset-button:hover {
+  background-color: var(--bg-surface);
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.stg-modal .preset-button.active {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary), var(--shadow-soft);
+  color: var(--text-primary);
+}
+
+/* Color swatch strip — top portion of card.
+   Margin breaks out of side padding so the strip is flush
+   with the inner edge of the card border. */
+.stg-modal .preset-button::before {
+  content: '';
+  display: block;
+  height: 40px;
+  flex-shrink: 0;
+  margin: 0 -6px 7px;
+}
+
+/* Active indicator — checkmark badge overlaid on the swatch */
+.stg-modal .preset-button.active::after {
+  content: '✓';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  font-family: sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ── Per-preset palette swatches ─────────────────────────────
+   Three-stop hard gradient: light bg / accent / dark header.
+   Colors are intentionally hardcoded — these are static palette
+   previews that must show regardless of the active theme.      */
+.stg-modal .preset-button[data-preset="green"]::before {
+  background: linear-gradient(to right, #FAFBF8 0% 38%, #16A34A 38% 72%, #1F3722 72% 100%);
+}
+.stg-modal .preset-button[data-preset="blue"]::before {
+  background: linear-gradient(to right, #F8FBFC 0% 38%, #0891B2 38% 72%, #0A3D4E 72% 100%);
+}
+.stg-modal .preset-button[data-preset="dark"]::before {
+  background: linear-gradient(to right, #0F1419 0% 38%, #58A6FF 38% 72%, #252B37 72% 100%);
+}
+.stg-modal .preset-button[data-preset="orange"]::before {
+  background: linear-gradient(to right, #FDF9F7 0% 38%, #EA580C 38% 72%, #5C2D1F 72% 100%);
+}
+.stg-modal .preset-button[data-preset="purple"]::before {
+  background: linear-gradient(to right, #FCFAFF 0% 38%, #8B5CF6 38% 72%, #3B1E54 72% 100%);
+}
+.stg-modal .preset-button[data-preset="grayscale"]::before {
+  background: linear-gradient(to right, #FFFFFF 0% 38%, #757575 38% 72%, #000000 72% 100%);
+}
+.stg-modal .preset-button[data-preset="grayscale-inverted"]::before {
+  background: linear-gradient(to right, #0A0A0A 0% 38%, #9E9E9E 38% 72%, #FFFFFF 72% 100%);
 }

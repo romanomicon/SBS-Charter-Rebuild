@@ -11,33 +11,70 @@
      ================================ */
 
   .global-nav {
-    position: sticky;
-    top: 0;
     z-index: 100;
   }
 
   .nav-inner {
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 
   .brand {
-    font-size: 1rem;
-    text-align: center;
-    width: 100%;
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
   }
 
   .nav-links {
-    width: 100%;
-    justify-content: center;
     flex-wrap: wrap;
     gap: 0.25rem;
   }
 
   .nav-links a {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.7rem;
+    padding: 0.4rem;
+  }
+
+  .nav-links a span {
+    display: none;
+  }
+
+  /* Nav action buttons (preview page header) */
+  .nav-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: flex-start;
+  }
+
+  .nav-actions .nav-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .nav-back-link {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    margin-right: 0;
+  }
+
+  .editor-toggle {
+    gap: 4px;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.3rem;
+  }
+
+  .toggle-switch {
+    width: 28px;
+    height: 16px;
+  }
+
+  .toggle-switch::after {
+    width: 12px;
+    height: 12px;
+  }
+
+  .editor-toggle input:checked + .toggle-switch::after {
+    left: 14px;
   }
 
   /* ================================
@@ -78,6 +115,11 @@
      Home Page
      ================================ */
 
+  .home-hero {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+  }
+
   .home-hero h1 {
     font-size: 1.75rem;
   }
@@ -100,15 +142,7 @@
   }
 
   /* ================================
-     Library Page
-     ================================ */
-
-  #book-library {
-    padding: 0;
-  }
-
-  /* ================================
-     Settings & Account Pages
+     Settings Page
      ================================ */
 
   .settings-page {
@@ -120,8 +154,8 @@
   }
 
   .settings-card h2 {
-    font-size: 1.1rem;
-    padding: 1rem 1.25rem;
+    font-size: 0.8rem;
+    padding: 0.65rem 1rem;
   }
 
   .settings-card > :not(h2) {
@@ -222,9 +256,9 @@
   }
 
   .panel-header {
-    font-size: 0.95rem;
+    font-size: 0.8rem;
     margin: -1rem -1rem 0.75rem -1rem;
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 1rem;
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
@@ -297,15 +331,6 @@
 /* Extra small mobile breakpoint: 480px and below */
 @media screen and (max-width: 480px) {
 
-  .nav-links a {
-    font-size: 0.75rem;
-    padding: 0.35rem 0.6rem;
-  }
-
-  .brand {
-    font-size: 0.9rem;
-  }
-
   h1 {
     font-size: 1.25rem;
   }
@@ -356,12 +381,17 @@
   }
 
   .settings-card h2 {
-    font-size: 1rem;
-    padding: 0.85rem 1rem;
+    font-size: 0.75rem;
+    padding: 0.6rem 0.85rem;
+  }
+
+  .nav-actions .nav-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
   }
 
   .panel-header {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
   }
 
   .structure-box {
@@ -370,22 +400,85 @@
   }
 }
 
+/* ================================
+   Settings Page — Editorial Hero
+   (appended for editorial redesign)
+   ================================ */
+
+@media screen and (max-width: 768px) {
+
+  .settings-hero {
+    padding: 4rem 1.5rem 3.5rem;
+  }
+
+  .settings-rule {
+    margin: 0 1.5rem 2.5rem;
+  }
+
+  .settings-content {
+    width: 100%;
+    min-width: unset;
+    padding: 0 0 3rem;
+  }
+
+}
+
+/* Settings Modal — Responsive */
+@media screen and (max-width: 768px) {
+
+  .stg-modal {
+    left: 50%;
+    width: 92%;
+    padding: 1.75rem 1.25rem;
+  }
+
+  /* Swatch grid — 2 columns on narrow screens */
+  .stg-modal .preset-selector {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+/* Home Page Editorial Redesign — Responsive */
+@media screen and (max-width: 768px) {
+
+  .home-hero {
+    padding: 2.5rem 1.25rem 1.5rem;
+  }
+
+  .home-hero h1 {
+    font-size: 2.25rem;
+  }
+
+  .home-eyebrow {
+    font-size: 0.58rem;
+  }
+
+  .tab-btn {
+    padding: 0 0.85rem 0.75rem;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+
+  .home-hero {
+    padding: 2rem 1rem 1.25rem;
+  }
+
+  .home-hero h1 {
+    font-size: 1.9rem;
+  }
+
+  /* Swatch grid — single column on very small screens */
+  .stg-modal .preset-selector {
+    grid-template-columns: 1fr;
+  }
+
+}
+
 /* Landscape orientation adjustments */
 @media screen and (max-width: 768px) and (orientation: landscape) {
-
-  .nav-inner {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .brand {
-    text-align: left;
-    width: auto;
-  }
-
-  .nav-links {
-    width: auto;
-  }
 
   .book-page-header {
     flex-direction: row;

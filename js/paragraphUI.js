@@ -30,7 +30,7 @@ export function renderParagraphRows() {
     title.oninput = e => (p.title = e.target.value);
 
     const show = createEl('button', {
-      className: 'btn small',
+      className: 'btn small compact-btn',
       text: '👁'
     });
 

@@ -1,19 +1,17 @@
-/* exportHandlers.js
-   Handles export actions:
-   - Chart Editor (HTML) export
-   - Word export (delegated to exportWord)
-*/
-
 import { state } from "./state.js";
 import { getById } from "./domUtils.js";
-import { exportWord } from "./export/exportWord.js";
-import { exportHTML } from "./export/exportHTML.js";
+import { exportWord } from "./exportWord.js";
 
 export function initExportButtons() {
-  // Chart Editor button - opens Chart Editor (preview.html) page
   const previewBtn = getById('export-preview');
   if (previewBtn) {
-    previewBtn.onclick = () => exportHTML(state);
+    previewBtn.onclick = () => {
+      if (!state.bookId) {
+        alert("Please save the book first before previewing.");
+        return;
+      }
+      window.location.href = `preview.html?bookId=${encodeURIComponent(state.bookId)}`;
+    };
   }
 
   const wordBtn = getById('export-word');

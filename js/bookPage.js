@@ -75,6 +75,26 @@ function finalizeAndRender() {
   initExportButtons();
 }
 
+// --- Show All / Hide All verse text ---
+const showAllBtn = document.getElementById("showAllText");
+const hideAllBtn = document.getElementById("hideAllText");
+
+if (showAllBtn) {
+  showAllBtn.addEventListener("click", () => {
+    document.querySelectorAll(".verse-text-box").forEach(el => {
+      el.style.display = "block";
+    });
+  });
+}
+
+if (hideAllBtn) {
+  hideAllBtn.addEventListener("click", () => {
+    document.querySelectorAll(".verse-text-box").forEach(el => {
+      el.style.display = "none";
+    });
+  });
+}
+
 // --- Save button ---
 const saveBtn = document.getElementById("saveBookBtn");
 const saveStatus = document.getElementById("saveStatus");

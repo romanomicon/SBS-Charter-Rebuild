@@ -41,16 +41,43 @@
 .preview-key-verse {
   text-align: center;
   padding: 0.4rem 0.8rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
   border: 1px solid var(--text-primary);
   font-size: 9pt;
   color: var(--text-primary);
+}
+
+/* Key verse text display */
+.key-verse-text {
+  text-align: center;
+  font-size: 9pt;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--text-primary);
+  border-top: none;
+  min-height: 1.2em;
+}
+
+.key-verse-text.found {
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.key-verse-text.not-found {
+  color: var(--color-danger, #c00);
+  font-style: italic;
+  font-size: 8pt;
+}
+
+.key-verse-text:empty {
+  display: none;
 }
 
 /* Structure table - matches Word export */
 .preview-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   font-size: 9pt;
   color: var(--text-primary);
 }
@@ -60,12 +87,18 @@
   border: 1px solid var(--text-primary);
   padding: 0.4rem;
   vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .preview-table th {
   font-weight: bold;
   text-align: center;
 }
+
+.preview-table th:nth-child(1) { width: 33.33%; }
+.preview-table th:nth-child(2) { width: 33.33%; }
+.preview-table th:nth-child(3) { width: 33.34%; }
 
 .preview-table td strong {
   display: block;
@@ -140,7 +173,7 @@
 }
 
 .segment-table .writing-space:empty::before {
-  content: "Click to add notes...";
+  content: "Click to add observations...";
   color: var(--text-muted);
   font-style: italic;
 }
@@ -486,6 +519,123 @@
 .editor-toggle-label {
   user-select: none;
   font-weight: 500;
+}
+
+/* ================================
+   Responsive - Phone
+   ================================ */
+
+@media screen and (max-width: 768px) {
+  .preview-container {
+    max-width: 100%;
+    padding: 0 0.5rem;
+    margin: 1rem auto;
+  }
+
+  .preview-page {
+    width: 100%;
+    min-height: auto;
+    padding: 0.75rem;
+  }
+
+  .preview-title {
+    font-size: 13pt;
+  }
+
+  .preview-key-verse {
+    font-size: 8pt;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .preview-table {
+    font-size: 8pt;
+  }
+
+  .preview-table th,
+  .preview-table td {
+    padding: 0.25rem;
+    word-break: break-word;
+  }
+
+  .segment-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-size: 9pt;
+  }
+
+  .segment-header .segment-range {
+    margin-left: 0;
+  }
+
+  .segment-table {
+    font-size: 8pt;
+  }
+
+  .segment-table td {
+    padding: 0.2rem;
+  }
+
+  .segment-table .side-col {
+    width: auto;
+    min-width: 0;
+  }
+
+  .segment-table .header-row,
+  .segment-table .writing-space {
+    width: auto;
+  }
+
+  .segment-table .writing-space {
+    min-height: 40px;
+  }
+
+  /* Formatting toolbar docked to bottom on mobile */
+  .format-toolbar-fixed {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    border-radius: 8px 8px 0 0;
+    padding: 6px 8px;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .format-toolbar-fixed.visible {
+    transform: none;
+  }
+
+  .format-toolbar-fixed button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .preview-footer {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .preview-page {
+    padding: 0.5rem;
+  }
+
+  .preview-title {
+    font-size: 11pt;
+  }
+
+  .preview-table {
+    font-size: 7pt;
+  }
+
+  .segment-table {
+    font-size: 7pt;
+  }
 }
 
 /* Print styles - A4 paper */

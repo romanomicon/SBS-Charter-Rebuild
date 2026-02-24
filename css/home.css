@@ -3,51 +3,143 @@
    ================================ */
 
 .home-hero {
-  margin-bottom: 3rem;
+  position: relative;
+  margin-bottom: 2rem;
   padding: 3rem 2rem;
   text-align: center;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-light));
   border-radius: var(--radius-small);
-  box-shadow: var(--shadow-strong);
   margin-top: -1rem;
+  background: url('../images/hero-bg.png') center/cover no-repeat;
+  overflow: hidden;
+}
+
+.home-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--header-bg) 30%,
+    transparent 100%
+  );
+}
+
+.home-hero > * {
+  position: relative;
 }
 
 .home-hero h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-inverse);
+  letter-spacing: 2px;
+  color: var(--header-text);
   margin-bottom: 0.5rem;
 }
 
 .home-hero p {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.1rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
   margin: 0;
 }
 
+/* ================================
+   Tab Bar
+   ================================ */
+
+.tab-bar {
+  position: relative;
+  display: inline-flex;
+  background: rgba(128, 128, 128, 0.12);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px 20px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: color 0.2s ease, background 0.15s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.tab-btn.active {
+  color: var(--header-text);
+}
+
+.tab-btn.active:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.tab-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  border-radius: 7px;
+  background: var(--header-bg);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ================================
+   Books Grid
+   ================================ */
+
 .books-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(max(180px, calc((100% - 5 * 1rem) / 6)), 1fr));
+  gap: 1rem;
+  min-height: 60vh;
+  align-content: start;
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Book tile - base */
 .book-tile {
-  border-radius: 6px;
+  border-radius: var(--radius-small);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   border: none;
   overflow: hidden;
   position: relative;
+  animation: tile-in 0.22s ease both;
 }
 
 /* New book - simple pill */
 .book-tile.new {
-  background: var(--bg-surface);
-  padding: 0.8rem 1.5rem;
+  background: var(--bg-surface-muted);
+  padding: 1.4rem 1.2rem;
   box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,13 +153,13 @@
   width: 0;
   height: 100%;
   background: var(--accent-primary);
-  transition: width 0.3s ease;
+  transition: width 0.2s ease;
   z-index: 0;
 }
 
 .book-tile.new:hover {
-  transform: translateY(-3px);
   box-shadow: var(--shadow-medium);
+  border-color: var(--accent-primary);
 }
 
 .book-tile.new:hover::before {
@@ -80,90 +172,220 @@
 
 .pill-label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   color: var(--text-primary);
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
   position: relative;
   z-index: 1;
 }
 
-/* Saved book - split button */
+/* Saved book - card layout */
 .book-tile.saved {
   background: transparent;
   padding: 0;
   box-shadow: none;
 }
 
-.split-btn {
-  display: flex;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: var(--shadow-soft);
-}
-
-.split-btn button {
-  border: none;
-  cursor: pointer;
-  padding: 0.7rem 1rem;
-  transition: all 0.2s ease;
+.saved-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
+  background: var(--bg-surface-muted);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  height: 100%;
+  transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 
-.split-left {
+/* Accent stripe at top */
+.saved-card::before {
+  content: '';
+  display: block;
+  height: 3px;
   background: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.book-tile.saved:hover .saved-card {
+  box-shadow: var(--shadow-medium);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.saved-card-body {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.75rem 0.75rem 0.4rem;
   flex: 1;
 }
 
-.split-left:hover {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-}
-
-.split-left .btn-label,
-.split-left .btn-hint {
-  color: white;
-}
-
-.split-right {
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  border-left: 1px solid var(--border-primary);
-  min-width: 50px;
-}
-
-.split-right:hover {
-  background: var(--accent-light);
-  color: var(--accent-primary);
-  transform: translateY(-2px);
-}
-
-.btn-label {
+.saved-title {
   font-weight: 600;
-  font-size: 0.85rem;
-  white-space: nowrap;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
 }
 
-.btn-hint {
-  font-size: 0.6rem;
-  opacity: 0.85;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.saved-delete {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 5px;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+  padding: 0;
 }
 
-.btn-icon {
-  width: 18px;
-  height: 18px;
+.saved-card:hover .saved-delete {
+  opacity: 1;
+}
+
+.saved-delete:hover {
+  background: rgba(217, 48, 37, 0.1);
+  color: var(--color-danger);
+}
+
+.saved-delete:focus-visible {
+  outline: none;
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--color-danger);
+}
+
+.saved-card-actions {
+  display: flex;
+  border-top: 1px solid var(--border-primary);
+}
+
+.saved-btn-builder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  border-radius: 0;
+  padding: 0.6rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.15s ease;
+}
+
+.saved-btn-builder:hover {
+  background: var(--accent-hover);
+}
+
+.saved-btn-chart {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-left: 1px solid var(--border-primary);
+  border-radius: 0;
+  padding: 0.6rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.saved-btn-chart:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.saved-btn-chart svg {
+  width: 13px;
+  height: 13px;
   stroke: currentColor;
+  flex-shrink: 0;
 }
 
 /* ================================
-   Responsive Grid
+   Undo Toast
+   ================================ */
+
+#undo-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  opacity: 0;
+  background: var(--toast-bg);
+  color: var(--toast-text);
+  padding: 16px 24px;
+  border-radius: var(--radius-medium);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  box-shadow: var(--shadow-strong);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+#undo-toast.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+#undo-toast.hidden {
+  transform: translateX(-50%) translateY(120%);
+  opacity: 0;
+}
+
+#undo-toast button {
+  background: none;
+  border: none;
+  color: var(--toast-progress);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+#undo-toast button:hover {
+  text-decoration: underline;
+}
+
+#undo-progress-container {
+  width: 100%;
+  height: 4px;
+  background: var(--border-primary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#undo-progress {
+  height: 100%;
+  background: var(--toast-progress);
+  width: 100%;
+  transition: width 1s linear;
+}
+
+/* ================================
+   Responsive
    ================================ */
 
 @media (max-width: 768px) {
@@ -171,10 +393,205 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 0.75rem;
   }
+
+  #undo-toast {
+    left: 1rem;
+    right: 1rem;
+    transform: translateY(120%);
+    width: auto;
+  }
+
+  #undo-toast.visible {
+    transform: translateY(0);
+  }
+
+  #undo-toast.hidden {
+    transform: translateY(120%);
+  }
+
+  .tab-bar {
+    margin-bottom: 1rem;
+  }
+
+  .tab-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 480px) {
   .books-grid {
     grid-template-columns: 1fr;
   }
+
+}
+
+/* ================================
+   Editorial Library Redesign
+   Appended — overrides above where needed via cascade.
+   ================================ */
+
+/* ── Hero — clean typographic block, no background image ──── */
+.home-hero {
+  background: none;
+  padding: 3.5rem 2rem 2rem;
+  text-align: left;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.home-hero::before {
+  display: none; /* remove gradient overlay */
+}
+
+/* Faint oversized "Canon" watermark — same technique as landing page */
+.home-watermark {
+  position: absolute;
+  bottom: -0.12em;
+  left: -0.04em;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(4.5rem, 18vw, 12rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  opacity: 0.04;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+/* DM Mono eyebrow label above the headline */
+.home-eyebrow {
+  position: relative;
+  z-index: 1;
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 1rem 0;
+}
+
+/* Playfair Display headline */
+.home-hero h1 {
+  position: relative;
+  z-index: 1;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-transform: none;
+  margin-bottom: 1rem;
+}
+
+/* Subheading — override the existing rgba(255,255,255,0.7) hardcode */
+.home-hero p {
+  position: relative;
+  z-index: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* Thin horizontal rule below the subheading */
+.home-rule {
+  position: relative;
+  z-index: 1;
+  width: 3rem;
+  height: 1px;
+  background: var(--border-primary);
+  margin: 1.25rem 0 0;
+}
+
+/* ── Tab bar — typographic redesign ─────────────────────── */
+.tab-bar {
+  display: flex;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border-secondary);
+  padding: 4px 0 0;
+  gap: 0;
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border-radius: 0;
+  padding: 0 1.25rem 0.85rem;
+}
+
+.tab-btn:hover {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.tab-btn.active {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.tab-btn.active:hover {
+  background: transparent;
+}
+
+/* Slide indicator → slim accent bar pinned to bottom.
+   JS sets inline height via moveIndicator(); max-height
+   constrains it to 2px without breaking the JS offset math. */
+.tab-indicator {
+  background: var(--accent-primary);
+  border-radius: 2px 2px 0 0;
+  max-height: 2px;
+  top: auto;
+  bottom: 0;
+}
+
+/* ── Book tile (new / unsaved) — editorial card ──────────── */
+.book-tile.new {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  padding: 1.25rem 1rem 1.1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Remove the full-width accent fill reveal animation */
+.book-tile.new::before {
+  display: none;
+}
+
+.book-tile.new:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-primary);
+  box-shadow: inset 3px 0 0 var(--accent-primary), var(--shadow-soft);
+}
+
+/* Override the text-inverse color from the old hover rule */
+.book-tile.new:hover .pill-label {
+  color: var(--text-primary);
+}
+
+/* Book name typography */
+.pill-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0;
+  line-height: 1.4;
+  position: relative;
+  z-index: 1;
 }

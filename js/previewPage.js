@@ -1,27 +1,72 @@
-/*
-========================================================================
-CHART EDITOR - Editable book structure chart
-========================================================================
-Loads book from storage and allows editing of:
-- Division titles
-- Section titles
-- Segment titles
-- Key verse
-- Paragraph titles
-- Paragraph content (notes/writing space)
-- Segment side notes (left and right columns)
-
-Changes are saved back to storage.
-========================================================================
-*/
+// Chart Editor - editable book structure chart
 
 import { loadBook } from "./storage.js";
-import { exportWord } from "./export/exportWord.js";
+import { exportWord } from "./exportWord.js";
 
 // Current book state (loaded from storage)
 let bookState = null;
 let isDirty = false;
 let currentEditableElement = null;
+
+// Verse lookup map: "chapter:verse" → text
+let verseMap = null;
+
+// Load raw verse data and build a lookup map
+async function loadVerseMap(bookId) {
+  const path = `Books/raw/${encodeURIComponent(bookId)}.json`;
+  try {
+    const res = await fetch(path);
+    if (!res.ok) return null;
+    const raw = await res.json();
+    const map = new Map();
+    for (const entry of raw) {
+      if (entry.h) continue; // skip headers
+      // Reference format: "esv:BookName:Chapter:Verse"
+      const parts = entry.r.split(":");
+      if (parts.length >= 4) {
+        const chapter = parts[2];
+        const verse = parts[3];
+        if (verse === "0") continue; // skip chapter-level entries
+        const ref = `${chapter}:${verse}`;
+        // Strip *p paragraph markers from text
+        const text = (entry.t || "").replace(/\*p\s*/g, "");
+        map.set(ref, text);
+      }
+    }
+    return map;
+  } catch (err) {
+    console.error("Error loading raw verse data:", err);
+    return null;
+  }
+}
+
+// Look up a key verse reference and return { found, text }
+function lookupKeyVerse(keyVerse) {
+  if (!keyVerse || !verseMap) return { found: false, text: "" };
+  const text = verseMap.get(keyVerse);
+  if (text) return { found: true, text };
+  return { found: false, text: "" };
+}
+
+// Update the key verse text display in the overview page
+function updateKeyVerseDisplay() {
+  const textEl = document.getElementById("keyVerseText");
+  if (!textEl) return;
+  const keyVerse = bookState.keyVerse || "";
+  if (!keyVerse) {
+    textEl.textContent = "";
+    textEl.className = "key-verse-text";
+    return;
+  }
+  const result = lookupKeyVerse(keyVerse);
+  if (result.found) {
+    textEl.textContent = `"${result.text}"`;
+    textEl.className = "key-verse-text found";
+  } else {
+    textEl.textContent = `Verse ${keyVerse} not found in this book`;
+    textEl.className = "key-verse-text not-found";
+  }
+}
 
 // ================================
 // Text Formatting Toolbar (Fixed at top)
@@ -520,7 +565,7 @@ function saveBook() {
 }
 
 // Main initialization
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const params = new URLSearchParams(window.location.search);
   const bookId = params.get("bookId");
 
@@ -536,6 +581,9 @@ document.addEventListener("DOMContentLoaded", () => {
     showError(`Book "${bookId}" not found. Please go back to the library.`);
     return;
   }
+
+  // Load raw verse data for key verse lookup
+  verseMap = await loadVerseMap(bookId);
 
   // Update page title
   document.title = `${bookState.bookName || "Book"} — Chart Editor`;
@@ -566,7 +614,7 @@ function showError(message) {
     <div class="preview-page">
       <p style="text-align: center; padding: 2rem;">${message}</p>
       <p style="text-align: center;">
-        <a href="library.html">Go to Library</a>
+        <a href="home.html">Go Home</a>
       </p>
     </div>
   `;
@@ -589,6 +637,7 @@ function setupEditableListeners() {
     keyVerseEl.addEventListener("blur", () => {
       bookState.keyVerse = keyVerseEl.textContent.trim();
       markDirty();
+      updateKeyVerseDisplay();
     });
   }
 
@@ -855,6 +904,17 @@ function buildOverviewPage() {
   });
 
   const keyVerse = bookState.keyVerse || "";
+  const verseResult = lookupKeyVerse(keyVerse);
+  let verseTextHtml = "";
+  if (keyVerse) {
+    if (verseResult.found) {
+      verseTextHtml = `<div id="keyVerseText" class="key-verse-text found">"${safeText(verseResult.text)}"</div>`;
+    } else {
+      verseTextHtml = `<div id="keyVerseText" class="key-verse-text not-found">Verse ${safeText(keyVerse)} not found in this book</div>`;
+    }
+  } else {
+    verseTextHtml = `<div id="keyVerseText" class="key-verse-text"></div>`;
+  }
 
   return `
     <section class="preview-page">
@@ -863,6 +923,7 @@ function buildOverviewPage() {
       <div class="preview-key-verse">
         <strong>Key verse:</strong> <em contenteditable="true" data-field="keyVerse">${safeText(keyVerse)}</em>
       </div>
+      ${verseTextHtml}
 
       <table class="preview-table">
         <thead>

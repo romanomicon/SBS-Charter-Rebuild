@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Settings – Bible Flow</title>
+  <title>Settings — Project Nehemiah</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
-  <!-- Load theme variables FIRST -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sidebar.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/mobile.css">
 
@@ -19,125 +20,267 @@
     const savedPreset = localStorage.getItem('themePreset') || 'grayscale';
     document.documentElement.setAttribute('data-preset', savedPreset);
   </script>
+
+  <style>
+    /* ── Structural override ──────────────────────────────────── */
+    /* settings.css constrains to 50% centered column; the        */
+    /* editorial hero needs full width — restore it per section.  */
+    .settings-page {
+      width: 100%;
+      min-width: unset;
+      margin: 0;
+      padding: 0;
+      flex: 1;
+    }
+
+    /* Narrow centered column restored for the card content only */
+    .settings-content {
+      width: 50%;
+      min-width: 400px;
+      margin: 0 auto;
+      padding: 0 0 4.5rem;
+    }
+
+    /* ── Hero section ─────────────────────────────────────────── */
+    .settings-hero {
+      position: relative;
+      padding: 6rem 6vw 5rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Faint "THEME" watermark — same technique as landing page   */
+    .settings-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(5rem, 20vw, 22rem);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--text-primary);
+      opacity: 0.04;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    /* Eyebrow label — matches landing-eyebrow */
+    .settings-eyebrow {
+      position: relative;
+      z-index: 1;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Display headline — matches landing-headline */
+    .settings-headline {
+      position: relative;
+      z-index: 1;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(3.25rem, 9vw, 8rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin: 0 0 2rem 0;
+    }
+
+    /* Subheading — matches landing-subheading */
+    .settings-subheading {
+      position: relative;
+      z-index: 1;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 36rem;
+      margin: 0;
+    }
+
+    /* ── Divider — matches landing-rule ──────────────────────── */
+    .settings-rule {
+      width: 3.5rem;
+      height: 1px;
+      background: var(--border-primary);
+      margin: 0 6vw 3.5rem;
+    }
+
+    /* ── Card h2 labels — override dark-bar from settings.css ── */
+    /* Restyled to match the small-caps label from the landing    */
+    /* page feature block. settings.js refs: .preset-button,     */
+    /* .active — this override is safe.                           */
+    .settings-card h2 {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 1.5rem 1.5rem 0.75rem;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      border-bottom: 1px solid var(--border-secondary);
+    }
+  </style>
 </head>
 
 <body>
-  <header class="global-nav">
-    <div class="nav-inner">
-      <div class="brand">Project Nehemiah</div>
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="settings.html">Settings</a>
-        <a href="account.html">Account</a>
-        <a href="library.html">Library</a>
-      </nav>
+
+  <!-- ═══ Sidebar ═══════════════════════════════════════════ -->
+  <aside class="sidebar" id="mainSidebar" aria-label="Site navigation">
+    <div class="sb-logo">
+      <button class="sb-toggle" id="sbCollapseToggle" aria-label="Expand navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <span class="sb-label sb-logo-name">Project Nehemiah</span>
     </div>
-  </header>
-
-  <main class="container settings-page">
-    <h1>Settings</h1>
-    <p class="muted">Customize your experience</p>
-
-    <!-- Theme Presets -->
-    <section class="settings-card">
-      <h2>🎨 Theme Presets</h2>
-      <p class="muted">Choose a pre-built color theme</p>
-      
-      <div class="preset-selector">
-        <button class="preset-button" data-preset="green">
-          🌿 Forest Green
-        </button>
-        <button class="preset-button" data-preset="blue">
-          🌊 Ocean Blue
-        </button>
-        <button class="preset-button" data-preset="dark">
-          🌙 Dark Mode
-        </button>
-        <button class="preset-button" data-preset="orange">
-          🔥 Sunset Orange
-        </button>
-        <button class="preset-button" data-preset="purple">
-          💜 Purple Haze
-        </button>
-        <button class="preset-button" data-preset="grayscale">
-          ⚫ Grayscale
-        </button>
-        <button class="preset-button" data-preset="grayscale-inverted">
-          ⚪ Inverted
-        </button>
-      </div>
-    </section>
-
-    <!-- Theme Preview -->
-    <section class="settings-card">
-      <h2>👀 Theme Preview</h2>
-      <p class="muted">See how your theme looks</p>
-      
-      <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-        <!-- Sample buttons -->
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button>Default Button</button>
-          <button class="primary">Primary Button</button>
-          <button class="small">Small Button</button>
-        </div>
-        
-        <!-- Sample input -->
-        <div>
-          <label>Sample Input</label>
-          <input type="text" placeholder="Type something..." style="width: 100%; margin-top: 0.5rem;">
-        </div>
-        
-        <!-- Sample text -->
-        <div>
-          <p style="margin: 0;">Primary text color</p>
-          <p class="muted" style="margin: 0.25rem 0 0 0;">Secondary/muted text color</p>
-        </div>
-        
-        <!-- Sample card -->
-        <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-medium); border: 1px solid var(--border-primary);">
-          <strong>Sample Card</strong>
-          <p class="muted" style="margin: 0.5rem 0 0 0;">This shows how cards and panels will look</p>
+    <nav class="sb-nav">
+      <div class="sb-section-header" aria-hidden="true">Main</div>
+      <a href="index.html" class="sb-item" data-page="landing" data-tooltip="Home">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="sb-label">Home</span>
+      </a>
+      <a href="home.html" class="sb-item" data-page="home" data-tooltip="Library">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span class="sb-label">Library</span>
+      </a>
+      <a href="settings.html" class="sb-item" data-page="settings" data-tooltip="Settings">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="sb-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sb-account">
+      <div class="sb-section-header" aria-hidden="true">Account</div>
+      <div class="sb-account-pill">
+        <div class="sb-avatar" aria-hidden="true">ED</div>
+        <div class="sb-account-info sb-label">
+          <span class="sb-account-name">Elias David</span>
+          <span class="sb-account-role">Administrator</span>
         </div>
       </div>
+    </div>
+  </aside>
+
+  <!-- Mobile sidebar toggle (visible on mobile only) -->
+  <button class="sb-mobile-btn" id="sbMobileBtn" aria-label="Open navigation" aria-expanded="false"></button>
+
+  <!-- Theme toggle -->
+  <button class="sb-theme-toggle" id="sbThemeToggle" aria-label="Switch to dark mode"></button>
+
+  <main class="settings-page">
+
+    <!-- ── Hero block ──────────────────────────────────────── -->
+    <section class="settings-hero">
+      <div class="settings-watermark" aria-hidden="true">Theme</div>
+      <p class="settings-eyebrow">Workspace</p>
+      <h1 class="settings-headline">Settings</h1>
+      <p class="settings-subheading">Customise the look and feel of your workspace.</p>
     </section>
 
-    <!-- Custom Colors (Coming Soon) -->
-    <section class="settings-card">
-      <h2>🎨 Custom Colors</h2>
-      <div class="custom-color-picker">
-        <p>Advanced customization options coming soon!</p>
-        <p style="margin-top: 0.5rem; font-size: 0.85rem;">
-          You'll be able to fine-tune individual colors to create your perfect theme.
-        </p>
-      </div>
-    </section>
+    <!-- Ruled divider -->
+    <div class="settings-rule" aria-hidden="true"></div>
 
-    <!-- Information -->
-    <section class="settings-card">
-      <h2>ℹ️ About Themes</h2>
-      <div class="setting-row">
-        <div>
-          <label>Theme System</label>
-          <div class="description">
-            All colors are controlled through CSS variables. Changes apply instantly across all pages.
+    <!-- ── Settings cards ──────────────────────────────────── -->
+    <div class="settings-content">
+
+      <!-- Theme Presets -->
+      <section class="settings-card">
+        <h2>Theme Presets</h2>
+        <p class="muted">Choose a pre-built color theme</p>
+
+        <div class="preset-selector">
+          <button class="preset-button" data-preset="green">
+            Forest Green
+          </button>
+          <button class="preset-button" data-preset="blue">
+            Ocean Blue
+          </button>
+          <button class="preset-button" data-preset="dark">
+            Dark Mode
+          </button>
+          <button class="preset-button" data-preset="orange">
+            Sunset Orange
+          </button>
+          <button class="preset-button" data-preset="purple">
+            Purple Haze
+          </button>
+          <button class="preset-button" data-preset="grayscale">
+            Grayscale
+          </button>
+          <button class="preset-button" data-preset="grayscale-inverted">
+            Inverted
+          </button>
+        </div>
+      </section>
+
+      <!-- Theme Preview -->
+      <section class="settings-card">
+        <h2>Theme Preview</h2>
+        <p class="muted">See how your theme looks</p>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+          <!-- Sample buttons -->
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button>Default Button</button>
+            <button class="primary">Primary Button</button>
+            <button class="small">Small Button</button>
+          </div>
+
+          <!-- Sample input -->
+          <div>
+            <label>Sample Input</label>
+            <input type="text" placeholder="Type something..." style="width: 100%; margin-top: 0.5rem;">
+          </div>
+
+          <!-- Sample text -->
+          <div>
+            <p style="margin: 0;">Primary text color</p>
+            <p class="muted" style="margin: 0.25rem 0 0 0;">Secondary/muted text color</p>
+          </div>
+
+          <!-- Sample card -->
+          <div style="background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-medium); border: 1px solid var(--border-primary);">
+            <strong>Sample Card</strong>
+            <p class="muted" style="margin: 0.5rem 0 0 0;">This shows how cards and panels will look</p>
           </div>
         </div>
-      </div>
-      <div class="setting-row">
-        <div>
-          <label>Persistence</label>
-          <div class="description">
-            Your theme choice is saved locally and will be remembered when you return.
+      </section>
+
+      <!-- About Themes -->
+      <section class="settings-card">
+        <h2>About Themes</h2>
+        <div class="setting-row">
+          <div>
+            <label>Theme System</label>
+            <div class="description">
+              All colors are controlled through CSS variables. Changes apply instantly across all pages.
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+        <div class="setting-row">
+          <div>
+            <label>Persistence</label>
+            <div class="description">
+              Your theme choice is saved locally and will be remembered when you return.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.settings-content -->
+
   </main>
 
-  <footer class="footer">
-    Theme changes are saved automatically
-  </footer>
-
+  <script src="js/sidebar.js"></script>
   <!-- Load settings controller -->
   <script src="js/settings.js"></script>
 </body>

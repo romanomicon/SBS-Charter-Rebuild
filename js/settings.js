@@ -1,15 +1,26 @@
 // ================================
-// Theme Settings Controller
+// Theme Settings — Modal Controller
 // ================================
+// Plain non-module script, compatible with a regular <script> tag.
+// Powers the floating settings modal on all 4 active pages.
+// The core theme-switching logic is unchanged from the original.
 
 document.addEventListener("DOMContentLoaded", () => {
-  const root = document.documentElement;
-  const buttons = document.querySelectorAll(".preset-button");
+  const root     = document.documentElement;
+  const buttons  = document.querySelectorAll(".preset-button");
+  const modal    = document.getElementById("stgModal");
+  const backdrop = document.getElementById("stgBackdrop");
+  const closeBtn = document.getElementById("stgClose");
 
+  // Intercept the Settings sidebar link — open modal instead of navigating
+  const settingsLink = document.querySelector('.sb-item[data-page="settings"]');
+
+  // ── Theme init ──────────────────────────────────────────────
   const savedPreset = localStorage.getItem("themePreset") || "grayscale";
   setPreset(savedPreset);
   updateActiveButton(savedPreset);
 
+  // ── Preset buttons ──────────────────────────────────────────
   buttons.forEach(btn => {
     btn.addEventListener("click", () => {
       const preset = btn.dataset.preset;
@@ -20,6 +31,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // ── Modal open / close ──────────────────────────────────────
+  function openModal() {
+    if (!modal || !backdrop) return;
+    modal.classList.add("stg-is-open");
+    backdrop.classList.add("stg-is-open");
+    modal.setAttribute("aria-hidden", "false");
+  }
+
+  function closeModal() {
+    if (!modal || !backdrop) return;
+    modal.classList.remove("stg-is-open");
+    backdrop.classList.remove("stg-is-open");
+    modal.setAttribute("aria-hidden", "true");
+  }
+
+  // Open when Settings sidebar item is clicked
+  if (settingsLink) {
+    settingsLink.addEventListener("click", e => {
+      e.preventDefault();
+      openModal();
+    });
+  }
+
+  // Close via X button, backdrop click, or Escape key
+  if (closeBtn)  closeBtn.addEventListener("click", closeModal);
+  if (backdrop)  backdrop.addEventListener("click", closeModal);
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  // ── Helpers ─────────────────────────────────────────────────
   function setPreset(presetName) {
     root.setAttribute("data-preset", presetName);
   }

@@ -4,50 +4,351 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bible Books — Home</title>
+  <title>Project Nehemiah</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/home.css">
-<link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/settings.css">
   <script>
     // Apply saved theme immediately
     const savedPreset = localStorage.getItem('themePreset') || 'grayscale';
     document.documentElement.setAttribute('data-preset', savedPreset);
   </script>
 
+  <style>
+    /* ── Landing page layout ──────────────────────────────────── */
+    .landing-page {
+      margin: 0;
+      padding: 0;
+      flex: 1;
+    }
+
+    /* ── Hero section ─────────────────────────────────────────── */
+    .landing-hero {
+      position: relative;
+      padding: 6rem 6vw 5.5rem;
+      overflow: hidden;
+      min-height: 62vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Faint watermark behind the headline */
+    .landing-watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(4.5rem, 15vw, 17rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--text-primary);
+      opacity: 0.04;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    /* Small uppercase label above the headline */
+    .landing-eyebrow {
+      position: relative;
+      z-index: 1;
+      font-family: 'DM Mono', 'Courier New', monospace;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.5rem 0;
+    }
+
+    /* Primary display headline */
+    .landing-headline {
+      position: relative;
+      z-index: 1;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(3.25rem, 9vw, 8rem);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin: 0 0 2rem 0;
+    }
+
+    /* One-paragraph description */
+    .landing-subheading {
+      position: relative;
+      z-index: 1;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      max-width: 36rem;
+      margin: 0 0 2.75rem 0;
+    }
+
+    /* Hero CTA button */
+    .landing-cta-btn {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      align-self: flex-start;
+      padding: 0.85rem 2.25rem;
+      background: var(--accent-primary);
+      color: var(--text-inverse);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: var(--radius-medium);
+      transition: background 0.15s ease;
+    }
+
+    .landing-cta-btn:hover {
+      background: var(--accent-hover);
+      color: var(--text-inverse);
+    }
+
+    /* ── Horizontal rule divider ──────────────────────────────── */
+    .landing-rule {
+      width: 3.5rem;
+      height: 1px;
+      background: var(--border-primary);
+      margin: 0 6vw 4.5rem;
+    }
+
+    /* ── Three-column feature block ───────────────────────────── */
+    .landing-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      padding: 0 6vw 6rem;
+    }
+
+    .landing-feature {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Italic Roman numeral */
+    .landing-feature-num {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1;
+      margin: 0 0 1.25rem 0;
+    }
+
+    /* Feature label — small-caps style */
+    .landing-feature-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin: 0 0 0.75rem 0;
+    }
+
+    /* Feature description */
+    .landing-feature-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ── CTA footer strip ─────────────────────────────────────── */
+    .landing-footer-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding: 2.75rem 6vw;
+      background: var(--accent-primary);
+    }
+
+    .landing-footer-copy {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin: 0;
+      color: var(--text-inverse);
+    }
+
+    /* Footer CTA button — outlined style on accent background */
+    .landing-footer-btn {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      background: transparent;
+      color: var(--text-inverse);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: var(--radius-medium);
+      border: 2px solid var(--text-inverse);
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .landing-footer-btn:hover {
+      background: var(--text-inverse);
+      color: var(--accent-primary);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .landing-hero {
+        padding: 4rem 1.5rem 3.5rem;
+        min-height: auto;
+      }
+
+      .landing-rule {
+        margin: 0 1.5rem 3rem;
+      }
+
+      .landing-features {
+        grid-template-columns: 1fr;
+        padding: 0 1.5rem 4rem;
+        gap: 2.75rem;
+      }
+
+      .landing-footer-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 1.5rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Global nav (shared style across pages) -->
-  <header class="global-nav">
-    <div class="nav-inner">
-      <div class="brand">Project Nehemiah</div>
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="settings.html">Settings</a>
-        <a href="account.html">Account</a>
-        <a href="library.html">Library</a>
-      </nav>
-    </div>
-  </header>
 
-  <main class="container">
-    <section class="home-hero">
-      <h1>Choose a Book</h1>
-      <p class="muted">Click a tile to open the book page and start creating structure items.</p>
+  <!-- ═══ Sidebar ═══════════════════════════════════════════ -->
+  <aside class="sidebar" id="mainSidebar" aria-label="Site navigation">
+    <div class="sb-logo">
+      <button class="sb-toggle" id="sbCollapseToggle" aria-label="Expand navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <span class="sb-label sb-logo-name">Project Nehemiah</span>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section-header" aria-hidden="true">Main</div>
+      <a href="index.html" class="sb-item" data-page="landing" data-tooltip="Home">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="sb-label">Home</span>
+      </a>
+      <a href="home.html" class="sb-item" data-page="home" data-tooltip="Library">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span class="sb-label">Library</span>
+      </a>
+      <a href="settings.html" class="sb-item" data-page="settings" data-tooltip="Settings">
+        <svg class="sb-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span class="sb-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sb-account">
+      <div class="sb-section-header" aria-hidden="true">Account</div>
+      <div class="sb-account-pill">
+        <div class="sb-avatar" aria-hidden="true">ED</div>
+        <div class="sb-account-info sb-label">
+          <span class="sb-account-name">Elias David</span>
+          <span class="sb-account-role">Administrator</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile sidebar toggle (visible on mobile only) -->
+  <button class="sb-mobile-btn" id="sbMobileBtn" aria-label="Open navigation" aria-expanded="false"></button>
+
+  <!-- Theme toggle -->
+  <button class="sb-theme-toggle" id="sbThemeToggle" aria-label="Switch to dark mode"></button>
+
+  <!-- ═══ Landing content ════════════════════════════════════ -->
+  <main class="landing-page">
+
+    <!-- 1. Hero block -->
+    <section class="landing-hero">
+      <div class="landing-watermark" aria-hidden="true">NEHEMIAH</div>
+      <p class="landing-eyebrow">A Scripture Study Tool</p>
+      <h1 class="landing-headline">Project<br>Nehemiah</h1>
+      <p class="landing-subheading">A structured Bible study tool for building verse-by-verse paragraph charts across all 66 books of the canon.</p>
+      <a href="home.html" class="landing-cta-btn">Open the Library</a>
     </section>
 
-    <!-- Grid where tiles will be inserted by home.js -->
-    <section id="booksGrid" class="books-grid" aria-live="polite"></section>
+    <!-- Ruled divider -->
+    <div class="landing-rule" aria-hidden="true"></div>
 
-    <footer class="footer">Built with plain HTML/CSS/JS — sample site</footer>
+    <!-- 2. Feature columns -->
+    <section class="landing-features" aria-label="How it works">
+      <article class="landing-feature">
+        <span class="landing-feature-num" aria-hidden="true">I</span>
+        <h2 class="landing-feature-label">Pick a Book</h2>
+        <p class="landing-feature-desc">Choose any of the 66 canonical books of Scripture. Each book's paragraph divisions are pre-loaded and ready to work with.</p>
+      </article>
+      <article class="landing-feature">
+        <span class="landing-feature-num" aria-hidden="true">II</span>
+        <h2 class="landing-feature-label">Build the Structure</h2>
+        <p class="landing-feature-desc">Assign paragraphs into a three-level hierarchy — Divisions, Sections, and Segments — to chart the flow of the author's argument.</p>
+      </article>
+      <article class="landing-feature">
+        <span class="landing-feature-num" aria-hidden="true">III</span>
+        <h2 class="landing-feature-label">Export the Chart</h2>
+        <p class="landing-feature-desc">Open the Chart Editor to annotate each segment with exegetical notes, then export your completed study chart as a Word document.</p>
+      </article>
+    </section>
+
   </main>
 
-  <!-- Scripts -->
-  <script type="module" src="js/home.js"></script>
+  <!-- 3. CTA footer strip — full-width, high-contrast band -->
+  <footer class="landing-footer-strip">
+    <p class="landing-footer-copy">Ready to begin? Your study chart awaits.</p>
+    <a href="home.html" class="landing-footer-btn">Get Started</a>
+  </footer>
+
+  <!-- Settings modal -->
+  <div class="stg-backdrop" id="stgBackdrop" aria-hidden="true"></div>
+  <div class="stg-modal" id="stgModal" role="dialog" aria-modal="true" aria-labelledby="stgHeading" aria-hidden="true">
+    <button class="stg-close" id="stgClose" aria-label="Close settings">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="stg-watermark" aria-hidden="true">Theme</div>
+    <p class="stg-eyebrow">Workspace</p>
+    <h2 class="stg-headline" id="stgHeading">Settings</h2>
+    <p class="stg-subheading">Customise the look and feel of your workspace.</p>
+    <div class="stg-rule" aria-hidden="true"></div>
+    <p class="stg-section-label">Theme Presets</p>
+    <div class="preset-selector">
+      <button class="preset-button" data-preset="green">Forest Green</button>
+      <button class="preset-button" data-preset="blue">Ocean Blue</button>
+      <button class="preset-button" data-preset="dark">Dark Mode</button>
+      <button class="preset-button" data-preset="orange">Sunset Orange</button>
+      <button class="preset-button" data-preset="purple">Purple Haze</button>
+      <button class="preset-button" data-preset="grayscale">Grayscale</button>
+      <button class="preset-button" data-preset="grayscale-inverted">Inverted</button>
+    </div>
+  </div>
+
+  <script src="js/sidebar.js"></script>
+  <script src="js/settings.js"></script>
 </body>
 
 </html>

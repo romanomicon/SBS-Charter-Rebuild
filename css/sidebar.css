@@ -1,0 +1,449 @@
+/* ================================
+   Sidebar — Project Nehemiah
+   Collapsible side navigation
+
+   Colors are driven entirely by the app's existing CSS custom
+   properties (css/theme.css). Switch themes via Settings → Theme
+   Presets — the sidebar adapts automatically.
+   ================================ */
+
+/* ─── Body offset ───────────────────────────────────────────────
+   Applied once by JS. No transition here — the sidebar is
+   position:fixed so its width animation never triggers a page
+   reflow. Animating padding-left on body causes full-page reflow
+   every frame, which is the source of jitter. Keep this static.
+   ─────────────────────────────────────────────────────────────── */
+body.has-sidebar {
+  padding-left: 60px;
+}
+
+/* ─── Sidebar shell ─────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 60px;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-primary);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 200;
+  scrollbar-width: none;
+  will-change: width;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar.sb-expanded {
+  width: 220px;
+}
+
+/* Prevent base.css broad color rules from bleeding into sidebar */
+.sidebar span,
+.sidebar div,
+.sidebar a {
+  color: inherit;
+}
+
+/* ─── Logo / branding ───────────────────────────────────────── */
+.sb-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 0.8rem;
+  border-bottom: 1px solid var(--border-primary);
+  flex-shrink: 0;
+  min-height: 60px;
+  overflow: hidden;
+}
+
+.sb-logo-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  background: var(--accent-primary);
+  color: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.sb-logo-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+/* ─── Suppress transitions during initial state restore ─────── */
+/* Applied for one frame on page load so saved state is instant. */
+.sidebar.sb-notransition,
+.sidebar.sb-notransition * {
+  transition: none !important;
+}
+
+/* ─── Collapse / expand toggle ──────────────────────────────── */
+.sb-toggle {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.sb-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.sb-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ─── Navigation area ───────────────────────────────────────── */
+.sb-nav {
+  flex: 1;
+  padding: 0.5rem 0 0.75rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Section headers — collapse/expand with sidebar */
+.sb-section-header {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding: 0 1rem;
+  transition:
+    max-height 0.22s ease,
+    opacity    0.22s ease,
+    padding    0.22s ease;
+}
+
+.sidebar.sb-expanded .sb-section-header {
+  max-height: 2rem;
+  opacity: 1;
+  padding: 0.7rem 1rem 0.3rem;
+}
+
+/* Nav items */
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.58rem 0.85rem;
+  margin: 0.1rem 0.45rem;
+  border-radius: 7px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.sb-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.sb-item.active {
+  /* Fallback for browsers without color-mix support */
+  background: rgba(26, 115, 232, 0.10);
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  color: var(--accent-primary);
+}
+
+.sb-item.active:hover {
+  background: rgba(26, 115, 232, 0.16);
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+}
+
+/* ─── Icons ─────────────────────────────────────────────────── */
+.sb-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ─── Labels — hidden when collapsed, revealed on hover ─────── */
+.sb-label {
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 0;
+  max-width: 0;
+  transition:
+    opacity   0.2s ease,
+    max-width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.sb-expanded .sb-label {
+  opacity: 1;
+  max-width: 180px;
+}
+
+/* ─── Account section ───────────────────────────────────────── */
+.sb-account {
+  border-top: 1px solid var(--border-primary);
+  padding: 0.6rem 0;
+  flex-shrink: 0;
+}
+
+.sb-account-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  margin: 0.1rem 0.45rem;
+  border-radius: 7px;
+  overflow: hidden;
+  cursor: default;
+  transition: background 0.15s ease;
+}
+
+.sb-account-pill:hover {
+  background: var(--bg-hover);
+}
+
+.sb-avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  /* Personal branding gradient — intentionally not theme-dependent */
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.sb-account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.sb-account-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sb-account-role {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+/* ─── Theme toggle (floating, top-right) ────────────────────── */
+/* Cycles between grayscale (light) and dark presets.           */
+/* Syncs with the existing data-preset system in theme.css.     */
+.sb-theme-toggle {
+  position: fixed;
+  top: 0.85rem;
+  right: 1rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0;
+  transition:
+    background   0.15s ease,
+    color        0.15s ease,
+    border-color 0.15s ease,
+    box-shadow   0.15s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.sb-theme-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+  box-shadow: var(--shadow-medium);
+}
+
+.sb-theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ─── Mobile open button ────────────────────────────────────── */
+/* Hidden on desktop; display:flex is set inside @media below.  */
+.sb-mobile-btn {
+  display: none;
+  position: fixed;
+  top: 0.85rem;
+  left: 1rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0;
+  box-shadow: var(--shadow-soft);
+  transition:
+    background   0.15s ease,
+    color        0.15s ease,
+    border-color 0.15s ease;
+}
+
+.sb-mobile-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.sb-mobile-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+/* ─── Mobile overlay ─────────────────────────────────────────── */
+.sb-mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 199;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+
+.sb-mobile-overlay.sb-overlay-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── Item tooltips (collapsed state only) ───────────────────── */
+/* JS-based (position:fixed div) to avoid sidebar overflow clip.  */
+.sb-tooltip {
+  position: fixed;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow-soft);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.15s ease;
+  z-index: 400;
+}
+
+.sb-tooltip.sb-tooltip--visible {
+  opacity: 1;
+  transition-delay: 0.35s;
+}
+
+/* ─── Responsive — mobile sidebar ───────────────────────────── */
+@media (max-width: 768px) {
+  /* Sidebar slides in from left; hidden by default via transform */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 220px;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.sb-mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Always show labels & headers when open on mobile */
+  .sidebar.sb-mobile-open .sb-label {
+    opacity: 1;
+    max-width: 180px;
+  }
+
+  .sidebar.sb-mobile-open .sb-section-header {
+    max-height: 2rem;
+    opacity: 1;
+    padding: 0.7rem 1rem 0.3rem;
+  }
+
+  body.has-sidebar {
+    padding-left: 0;
+  }
+
+  .sb-theme-toggle {
+    display: none;
+  }
+
+  .sb-mobile-btn {
+    display: flex;
+  }
+
+  .sb-mobile-overlay {
+    display: block;
+  }
+}

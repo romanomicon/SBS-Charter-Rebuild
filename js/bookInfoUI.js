@@ -11,7 +11,11 @@ import { scheduleAutosave } from "./autosave.js";
 export function renderBookInfoInputs() {
   const container = getById('bookInfoRow');
   if (!container) return;
+
+  // Preserve the header-actions div (save button), remove only generated inputs
+  const headerActions = container.querySelector('.header-actions');
   container.innerHTML = '';
+  if (headerActions) container.appendChild(headerActions);
 
   // ---- Book Title ----
 const titleWrap = createEl('div', { className: 'input-inline' });
@@ -61,5 +65,11 @@ titleInput.oninput = e => {
 
   keyWrap.append(keyLabel, keyInput);
 
-  container.append(titleWrap, keyWrap);
+  // Insert before header-actions so save button stays on the right
+  if (headerActions) {
+    container.insertBefore(keyWrap, headerActions);
+    container.insertBefore(titleWrap, keyWrap);
+  } else {
+    container.append(titleWrap, keyWrap);
+  }
 }
